@@ -1,6 +1,6 @@
 from PIL import Image #imports Image from the Pillow module - used to load images into an array of RGB values
 import numpy as np
-from utils import checkExceptionArray, checkExceptionBool, checkExceptionInteger, checkExceptionString
+from utils import checkExceptionArray, checkExceptionBool, checkExceptionInteger, checkExceptionString, countvalue
 
 def find_red_pixels(map_filename, upper_threshold=100, lower_threshold=50):
     """finds all red pixels in a given image
@@ -113,12 +113,42 @@ def find_cyan_pixels(map_filename, upper_threshold=100, lower_threshold=50):
     ##TODO use numpy to change RGB values as it is much faster
 
 
-def detect_connected_components(*args,**kwargs):
-    """Your documentation goes here"""
-    # Your code goes here
+def detect_connected_components(map_filename):
+    image = Image.open('data/'+map_filename) #stores the image file as an object
+    imageArray = np.array(image) #convert the image to an array of indivicualpixels
+    Queue = []
+    
+    visitedArray = [[0]*image.width]*image.height #Stores whether each pixel has been visited or not
+    print(visitedArray)#test
+    
+    connectedRegionNumPixels = [] #Stores the number of pixels in each connected region
+    for column in range(0,image.height): #iterates through each column of pixels stored within the originalImage object
+        for row in range(0,image.width): #iterates through each row of pixels stored within the originalImage object
+            currentNumPavementRegions = countvalue(visitedArray,1)
+            
+            if imageArray[row][column] == (255,255,255) and visitedArray[row][column] == 0:
+                visitedArray[row][column] = 1 #mark the pixel as visited
+                Queue.append(imageArray[row][column])
+                while len(Queue) != 0:
+                    item = Queue.pop(0) #Remove the next item from the queue
+                    list = [(-1,-1),(0,-1),(1,-1),(-1,0),(1,0),(-1,1),(0,1),(1,1)]
+                    for i in range(0,8):
+                        rowToCheck = row+list[i[0]]
+                        columnToCheck = column+list[i[1]]
+                        if (imageArray[rowToCheck][columnToCheck] == (255,255,255) and visitedArray[rowToCheck][columnToCheck] == 0):
+                            visitedArray[rowToCheck][columnToCheck] = 1 #set the pixel to visited
+                            Queue.append(imageArray[rowToCheck][columnToCheck])
+            connectedRegionNumPixels.append(countvalue(visitedArray,1) - currentNumPavementRegions)
+
+    MARK = visitedArray
+    return MARK        
+
 
 def detect_connected_components_sorted(*args,**kwargs):
     """Your documentation goes here"""
     # Your code goes here
 
+
+find_red_pixels('map.png')#test
+detect_connected_components('map-red-pixels.jpg')#test
 
