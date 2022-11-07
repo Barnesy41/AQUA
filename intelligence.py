@@ -2,15 +2,18 @@ from PIL import Image #imports Image from the Pillow module - used to load image
 import numpy as np
 
 def find_red_pixels(map_filename, upper_threshold=100, lower_threshold=50):
-    """_summary_
+    """finds all red pixels in a given image
 
     Args:
-        map_filename (str): _description_. The name of the map file that should be read
-        upper_threshold (int): _description_. Defaults to 100. The lowest (exclusive) red RGB value for the pixel to be considered red
-        lower_threshold (int): _description_. Defaults to 50. the heighest (exclusive) green/blue RGB value for the pixel to be considered red
+        map_filename (str): The name of the map file that should be read
+        upper_threshold (int): Defaults to 100. The lowest (exclusive) red RGB value for the pixel to be considered red
+        lower_threshold (int): Defaults to 50. the heighest (exclusive) green/blue RGB value for the pixel to be considered red
+
+    Outputs:
+        file: A file map-red-pixels.jpg in the data file
 
     Returns:
-        _type_: _description_
+        array: A 2D numpy array containing RGB data for each pixel in the resultant image
     """    
     originalImage = Image.open('data/'+map_filename) #stores the image file as an object
     newImage = Image.new("RGB",(originalImage.width,originalImage.height),(0, 0, 0)) #Create a new RGB mode image with identical width and height to the original image
