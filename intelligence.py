@@ -122,5 +122,3 @@ def detect_connected_components_sorted(*args,**kwargs):
     # Your code goes here
 
 
-
-find_cyan_pixels('map.png')
