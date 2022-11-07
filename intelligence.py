@@ -1,5 +1,6 @@
 from PIL import Image #imports Image from the Pillow module - used to load images into an array of RGB values
 import numpy as np
+from utils import checkExceptionArray, checkExceptionBool, checkExceptionInteger, checkExceptionString
 
 def find_red_pixels(map_filename, upper_threshold=100, lower_threshold=50):
     """finds all red pixels in a given image
@@ -11,10 +12,30 @@ def find_red_pixels(map_filename, upper_threshold=100, lower_threshold=50):
 
     Outputs:
         file: A file map-red-pixels.jpg in the data file
+        
+    Raised:
+        Exception: map_filename is not of type str
+        Exception: upper_threshold is not of type int
+        Exception: lower_threshold is not of type int
+        Exception: upper_threshold is not within the bounds 0, 255 inclusive
+        Exception: lower_threshold is not within the bounds 0, 255 inclusive
 
     Returns:
         array: A 2D numpy array containing RGB data for each pixel in the resultant image
     """    
+    ##Check for parameters of incorrect type
+    checkExceptionString(map_filename) #Check that map_filename is of type str
+    checkExceptionInteger(upper_threshold) #Check that upper_threshold is of type int
+    checkExceptionInteger(lower_threshold) #Check that lower_threshold is of type int
+    
+    ##Check that the upper threshold does not exceed its maximum/minimum values
+    if(upper_threshold > 255 or upper_threshold < 0):
+        raise Exception("upper_threshold value: "+ upper_threshold + "found, a value between 0 and 255 (inclusive) was expected")
+    
+    ##Check that the lower threshold does not exceed its maximum/minimum values
+    if(lower_threshold > 255 or lower_threshold < 0):
+        raise Exception("upper_threshold value: "+ lower_threshold + "found, a value between 0 and 255 (inclusive) was expected")
+    
     originalImage = Image.open('data/'+map_filename) #stores the image file as an object
     newImage = Image.new("RGB",(originalImage.width,originalImage.height),(0, 0, 0)) #Create a new RGB mode image with identical width and height to the original image
     
@@ -34,9 +55,7 @@ def find_red_pixels(map_filename, upper_threshold=100, lower_threshold=50):
     newImage.save('data/map-red-pixels.jpg') #Saves the resultant image as a file map-red-pixels.jpg and stores it inside the data file
     return np.array(newImage) #return the resultant image as a 2D numpy array
         
-    ##TODO What if there is somehow an incorrect RGBA value? e.g. value > 255 or < 0 input as a parameter
     ##TODO use numpy to change RGB values as it is much faster
-    ##TODO check for incorrect types when input into function
 
 def find_cyan_pixels(*args,**kwargs):
     """Your documentation goes here"""
