@@ -1,7 +1,4 @@
-# This is a template. 
-# You should modify the functions below to match
-# the signatures determined by the project specification
-
+import numpy as np 
 
 def sumvalues(values):
     """Returns the sum of all values in an array
@@ -195,13 +192,15 @@ def checkExceptionBool(value):
 
 
 def checkExceptionArray(value):
-    """Raises an exception if the value input as a parameter is not a list
+    """Raises an exception if the value input as a parameter is not a list or a numpy array
 
     Args:
-        value (any): value to check if type list
+        value (any): value to check if type list/numpy array
 
     Raises:
-        Exception: if parameter is not of type list
+        Exception: if parameter is not of type list/ numpy array
     """    
-    if(not type(value) is list):
-        raise Exception("Value of type: " + str(type(value)) + " found. Value of type: " + str(type([])) + " expected.")
+    
+    if(not type(value) is list):#checks if value is not a list
+        if (not type(value is np.array(list))):#checks if the value is not a numpy array
+            raise Exception("Value of type: " + str(type(value)) + " found. Value of type: " + str(type([])) + " expected.")
