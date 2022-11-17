@@ -37,7 +37,46 @@ def readCSV(fileName):
 #dict(name1,name2,name3)
 #name1(date, name, no, pm10, pm25)
 
+def daily_average(data:dict, monitoring_station:str, pollutant:str) -> list:
+    
+    #Put in checks e.g. an hour may be fully missing from the data set
+    #Check for exceptions
+    checkExceptionString(monitoring_station)
+    checkExceptionString(pollutant)
+    checkExceptionDictionary(data)
+    
+    
+    
+    #lowercase the parameters to avoid errors in case sensitivity
+    monitoring_station = monitoring_station.lower()
+    pollutant = pollutant.lower()
+    
+    pollutantData = data[monitoring_station.lower()][pollutant]
 
+    dailyAverageList = []
+    dailyTotal = float(0.0)
+    count = 1
+    numDataPoints = 0
+    for i in pollutantData:
+        if count%24 != 23:
+            try:
+                dailyTotal = dailyTotal + float(i)
+                numDataPoints += 1
+            except:
+                a = 1
+        else:
+            if pollutant == 'no':
+                dailyAverageList.append(round((dailyTotal/numDataPoints),5))#append to list and round to 5 dp
+            elif pollutant == 'pm10':
+                dailyAverageList.append(round((dailyTotal/numDataPoints),3))#append to list and round to 3 dp
+            elif pollutant == 'pm25':
+                dailyAverageList.append(round((dailyTotal/numDataPoints),3))#append to list and round to 3 dp
+            dailyTotal = 0
+            numDataPoints = 0
+        count+=1
+        
+    return dailyAverageList
+        
     
 
 def daily_median(data:dict, monitoring_station:str, pollutant:str) -> list:
