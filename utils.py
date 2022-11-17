@@ -204,3 +204,18 @@ def checkExceptionArray(value):
     if(not type(value) is list):#checks if value is not a list
         if (not type(value is np.array(list))):#checks if the value is not a numpy array
             raise Exception("Value of type: " + str(type(value)) + " found. Value of type: " + str(type([])) + " expected.")
+        
+        
+        
+def checkExceptionDictionary(value):
+    """Raises an exception if the value input as a parameter is not a dictionary
+
+    Args:
+        value (any): value to check if type dictionary
+
+    Raises:
+        Exception: if parameter is not of type dictionary
+    """    
+    
+    if(not type(value) is dict):#checks if value is not a list
+        raise Exception("Value of type: " + str(type(value)) + " found. Value of type: " + str(type({})) + " expected.")
