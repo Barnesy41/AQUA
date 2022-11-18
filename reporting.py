@@ -494,14 +494,45 @@ def peak_hour_date(data: dict, date: str, monitoring_station: str, pollutant: st
         raise Exception(
             "No numeric value found for the specific date searched for. Expected at least one numeric value")
 
-    print(peakValue)
     return peakValue
 
 
 def count_missing_data(data: dict,  monitoring_station: str, pollutant: str) -> list:
-    """Your documentation goes here"""
+    # Check for exceptions
+    checkExceptionString(monitoring_station)
+    checkExceptionString(pollutant)
+    checkExceptionDictionary(data)
 
-    # Your code goes here
+    # lowercase the parameters to avoid errors in case sensitivity
+    monitoring_station = monitoring_station.lower()
+    pollutant = pollutant.lower()
+
+    # Raise an exception if an unknown monitoring station is entered
+    # TODO not sure if this should be here? I would put this usually but not sure how code testing works, i dont think that this can
+    # be tested with the names of other monitoring stations though
+    # possibly remove? ask about it.
+    if monitoring_station != 'harlington':
+        if monitoring_station != 'marylebone road':
+            if monitoring_station != 'n kensington':
+                raise Exception("unexpected parameter! Parameter: monitoring_station: ", monitoring_station,
+                                "entered. expected: 'harlington', 'marylebone road', or 'n kensington'")
+
+    # Raise an exception if an unknown pollutant is enteredd
+    if pollutant != 'no':
+        if pollutant != 'pm10':
+            if pollutant != 'pm25':
+                raise Exception("unexpected paramater! Parameter: pollutant: ",
+                                pollutant, "entered. expected: 'no', 'pm10', or 'pm25'")
+
+    # Retrieve the list for the specific monitoring station and pollutant
+    pollutantData = data[monitoring_station][pollutant]
+    
+    total = 0
+    for i in pollutantData:
+        if i == 'No data':
+            total += 1
+    
+    return total
 
 
 def fill_missing_data(data: dict, new_value: int,  monitoring_station: str, pollutant: str) -> list:
@@ -510,7 +541,7 @@ def fill_missing_data(data: dict, new_value: int,  monitoring_station: str, poll
     # Your code goes here
 
 
-# main
+# test start
 pollutionDictionary = dict()
 pollutionDictionary['harlington'] = readCSV(
     "data/Pollution-London Harlington.csv")
@@ -527,3 +558,7 @@ readCSV("data/Pollution-London Harlington.csv")
 monthly_average(pollutionDictionary, 'harLington', 'pM25')
 
 peak_hour_date(pollutionDictionary, '2021-11-18', 'harLington', 'pM25')
+
+print(count_missing_data(pollutionDictionary, 'harLington', 'pM25'))
+
+#test end
