@@ -213,9 +213,71 @@ def daily_median(data: dict, monitoring_station: str, pollutant: str) -> list:
 
 
 def hourly_average(data: dict, monitoring_station: str, pollutant: str) -> list:
-    """Your documentation goes here"""
+    """returns a list/array with the hourly averages (i.e. 24 values) for a particular pollutant and monitoring station
 
-    # Your code goes here
+    Args:
+        data (dict): a dictionary containing the data for all monitoring stations
+        monitoring_station (str): the name of the monitoring station you would like to recieve pollutant data from
+        pollutant (str): the name of the pollutant that you would like to recieve data about
+
+    Returns:
+        list: a list containing the values of the average pollutant level for each hour of the day
+    """    
+    #TODO test that the results of this function are correct
+    
+    pollutantData = data[monitoring_station][pollutant] #Retrieve the list for the specific monitoring station and pollutant
+    
+    hourlyDict = {} #A dictionary containing each hour and the values
+    count = 0
+    for i in pollutantData:
+        #Add a new key if the current time is not already a key in the dictionary
+        
+        hour = data[monitoring_station]['time'][count][0:2] #Gets only the hour from the time in the pollution csv file
+        if hour not in hourlyDict.keys(): 
+            hourlyDict[hour] = [] #Creates a new dictionary key with an empty list value
+        
+        hourlyDict[hour].append(i) #Add the current pollution data being iterated through to the correct hour in the dictionary
+
+        count += 1
+        
+    # Find the number of decimal places the data is required to be
+    maximumNumDecimalPlaces = 0
+    for i in pollutantData:
+        try:
+            i = float(i)  # Only count data that can be converted to a float
+
+        except:
+            a = 1  # ignore other values
+
+        if type(i) == float:
+
+            i = str(i)
+            if len(i[i.rfind('.') + 1:]) > maximumNumDecimalPlaces:
+                # finds the number of digits after the decimal point
+                maximumNumDecimalPlaces = len(i[i.rfind('.') + 1:])
+
+
+
+    hourlyAvgList = []
+    average = 0
+    for key in hourlyDict:
+        
+        total = 0
+        numberOfValues = 0
+        for i in hourlyDict[key]:
+            try:
+                total += float(i)
+                numberOfValues += 1
+            except:
+                a = 1 #The value should be excluded
+            
+        average = total/numberOfValues
+        hourlyAvgList.append(round(average, maximumNumDecimalPlaces)) #Append the average hourly value to a list and round the value to the required number of decimal places
+        
+    print(hourlyAvgList)
+    return hourlyAvgList #Returns the list of hourly averages
+        
+            
 
 
 def monthly_average(data: dict, monitoring_station: str, pollutant: str) -> list:
@@ -242,4 +304,4 @@ def fill_missing_data(data: dict, new_value: int,  monitoring_station: str, poll
     # Your code goes here
 
 
-
+# main
