@@ -223,26 +223,22 @@ def checkExceptionDictionary(value):
 
 
 def checkExceptionDate(value):
-    """If possible changes the format of dates to YYYY-MM-DD otherwise generates an exception
+    """Checks if the date format is YYYY-MM-DD otherwise generates an exception
 
     Args:
-        value (str): enter a date to reformat/check for exceptions
-
-    Returns:
-        str: a string in the format YYYY-MM-DD
+        value (str): enter a date to check for exceptions
+        
+    Raise:
+        Exception: If the length of the date is too short/ too long (not 10 chars long)
+        Exception: If the format of the date is not seperated by - e.g. if in the format YYYY/MM/DD not YYYY-MM-DD
     """    
     #TODO reformat dates in the wrong order e.g. DD-MM-YYYY (ask if we can import regex)
     checkExceptionString(value)#Checks if the input value is a string
     
     if(len(value) != 10):
         raise Exception("Incorrectly formatted date! (length too small) Expected: (YYYY-MM-DD) recieved: ", value)
-    
-    if(value[4] == "/" or value[7] == "/" or value[10] == "/"):
-        value[4] = "-"
-        value[7] = "-"
-        value[10] = "-"
         
-    if(value[4] != "-" or value[7] != "-" or value[10] != "-"):
+    if(value[4] != "-" or value[7] != "-"):
         raise Exception("Incorrectly formatted date! Expected: (YYYY-MM-DD) recieved: ", value)
 
     return value
