@@ -39,7 +39,20 @@ def readCSV(fileName):
 
 
 def daily_average(data: dict, monitoring_station: str, pollutant: str) -> list:
+    """Takes the data from all monitoring stations input as a dictionary with the keys containing lists of data. 
+    Returns a list containing the daily average pollutant data for a given pollutant and monitoring station
 
+    Raises:
+        Exception: Raises an exception if an invalid monitoring station is input*
+        Exception: Raises an exception if an invalid monitoring station is input
+        Exception: Raises an exception of the data input as a parameter is not a dictionary
+        Exception: Raises an exception if the monitoring_station parameter is not a string
+        Exception: Raises an exeption if the pollutant parameter is not a string
+
+    Returns:
+        list: a list containing the daily average pollutant data for a given pollutant and monitoring station
+    """
+    
     # TODO Put in checks e.g. an hour may be fully missing from the data set which would break the code as I rely on there being
     # exactly 24 pieces of data to calculate the daily average
 
