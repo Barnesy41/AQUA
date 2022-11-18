@@ -219,3 +219,30 @@ def checkExceptionDictionary(value):
     
     if(not type(value) is dict):#checks if value is not a list
         raise Exception("Value of type: " + str(type(value)) + " found. Value of type: " + str(type({})) + " expected.")
+    
+
+
+def checkExceptionDate(value):
+    """If possible changes the format of dates to YYYY-MM-DD otherwise generates an exception
+
+    Args:
+        value (str): enter a date to reformat/check for exceptions
+
+    Returns:
+        str: a string in the format YYYY-MM-DD
+    """    
+    #TODO reformat dates in the wrong order e.g. DD-MM-YYYY (ask if we can import regex)
+    checkExceptionString(value)#Checks if the input value is a string
+    
+    if(len(value) != 10):
+        raise Exception("Incorrectly formatted date! (length too small) Expected: (YYYY-MM-DD) recieved: ", value)
+    
+    if(value[4] == "/" or value[7] == "/" or value[10] == "/"):
+        value[4] = "-"
+        value[7] = "-"
+        value[10] = "-"
+        
+    if(value[4] != "-" or value[7] != "-" or value[10] != "-"):
+        raise Exception("Incorrectly formatted date! Expected: (YYYY-MM-DD) recieved: ", value)
+
+    return value
