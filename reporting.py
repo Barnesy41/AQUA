@@ -7,19 +7,17 @@ def readCSV(fileName):
 
     readHeadings = True
     dateList = []
-    nameList = []
+    timeList = []
     noList = []
     pm10List = []
     pm25List = []
-    count = 0
     for i in file:
-        count += 1
         line = i.rstrip()
         if readHeadings == False:
             lineArr = line.split(",")
             if len(lineArr) == 5:
                 dateList.append(lineArr[0])
-                nameList.append(lineArr[1])
+                timeList.append(lineArr[1])
                 noList.append(lineArr[2])
                 pm10List.append(lineArr[3])
                 pm25List.append(lineArr[4])
@@ -27,15 +25,12 @@ def readCSV(fileName):
             readHeadings = False
 
     dictionary["date"] = dateList
-    dictionary["name"] = nameList
+    dictionary["time"] = timeList
     dictionary["no"] = noList
     dictionary["pm10"] = pm10List
     dictionary["pm25"] = pm25List
 
     return dictionary
-
-# dict(name1,name2,name3)
-#name1(date, name, no, pm10, pm25)
 
 
 def daily_average(data: dict, monitoring_station: str, pollutant: str) -> list:
@@ -52,7 +47,7 @@ def daily_average(data: dict, monitoring_station: str, pollutant: str) -> list:
     Returns:
         list: a list containing the daily average pollutant data for a given pollutant and monitoring station
     """
-    
+
     # TODO Put in checks e.g. an hour may be fully missing from the data set which would break the code as I rely on there being
     # exactly 24 pieces of data to calculate the daily average
 
@@ -84,27 +79,37 @@ def daily_average(data: dict, monitoring_station: str, pollutant: str) -> list:
 
     pollutantData = data[monitoring_station.lower()][pollutant]
 
+    # Find the number of decimal places the data is required to be
+    maximumNumDecimalPlaces = 0
+    for i in pollutantData:
+        try:
+            i = float(i)  # Only count data that can be converted to a float
+
+        except:
+            a = 1  # ignore other values
+
+        if type(i) == float:
+
+            i = str(i)
+            if len(i[i.rfind('.') + 1:]) > maximumNumDecimalPlaces:
+                # finds the number of digits after the decimal point
+                maximumNumDecimalPlaces = len(i[i.rfind('.') + 1:])
+
     dailyAverageList = []
     dailyTotal = float(0.0)
-    count = 1
+    count = 0
     numDataPoints = 0
     for i in pollutantData:
-        if count % 24 != 23:
-            try:
-                dailyTotal = dailyTotal + float(i)
-                numDataPoints += 1
-            except:
-                a = 1
-        else:
-            if pollutant == 'no':
-                # append to list and round to 5 dp
-                dailyAverageList.append(round((dailyTotal/numDataPoints), 5))
-            elif pollutant == 'pm10':
-                # append to list and round to 3 dp
-                dailyAverageList.append(round((dailyTotal/numDataPoints), 3))
-            elif pollutant == 'pm25':
-                # append to list and round to 3 dp
-                dailyAverageList.append(round((dailyTotal/numDataPoints), 3))
+        # Try to increment the daily total, otherwise ignore as it is missing data
+        try:
+            dailyTotal = dailyTotal + float(i)
+            numDataPoints += 1
+        except:
+            a = 1
+
+        if count % 24 == 23:
+            dailyAverageList.append(round(dailyTotal/numDataPoints, maximumNumDecimalPlaces))
+            
             dailyTotal = 0
             numDataPoints = 0
         count += 1
@@ -126,7 +131,7 @@ def daily_median(data: dict, monitoring_station: str, pollutant: str) -> list:
     Returns:
         list: a list containing the daily median pollutant data for a given pollutant and monitoring station
     """
-    
+
     # TODO Put in checks e.g. an hour may be fully missing from the data set which would break the code as I rely on there being
     # exactly 24 pieces of data to calculate the daily average
 
@@ -158,34 +163,50 @@ def daily_median(data: dict, monitoring_station: str, pollutant: str) -> list:
 
     pollutantData = data[monitoring_station.lower()][pollutant]
 
-    dailyMedianList = []
-    count = 1
+    # Find the number of decimal places the data is required to be
+    maximumNumDecimalPlaces = 0
     for i in pollutantData:
-        dailyPollutantValues = [] #Stores the pollutant data for a given day
-        
-        #include the data in the median if the data is an integer or floating point value
-        if(type(i) == float or type(i) == int):
+        try:
+            i = float(i)  # Only count data that can be converted to a float
+
+        except:
+            a = 1  # ignore other values
+
+        if type(i) == float:
+
+            i = str(i)
+            if len(i[i.rfind('.') + 1:]) > maximumNumDecimalPlaces:
+                # finds the number of digits after the decimal point
+                maximumNumDecimalPlaces = len(i[i.rfind('.') + 1:])
+
+    dailyMedianList = []
+    count = 0
+    dailyPollutantValues = []  # Stores the pollutant data for a given day
+    for i in pollutantData:
+        # include the data in the median if the data is an integer or floating point value
+        try:
+            i = float(i)
             dailyPollutantValues.append(i)
-        
+        except:
+            a = 1  # Ignore any missing data
+
         if count % 24 == 23:
-            dailyPollutantValues = dailyPollutantValues.sort() #Sort the values into order
-            medianValue = -1
-            
-            #Find the centre value
-            if len(dailyPollutantValues)%2 == 0: #If even length
-                medianValue = (dailyPollutantValues[len(dailyPollutantValues)/2] + dailyPollutantValues[len(dailyPollutantValues)/2 - 1])/2    
+            dailyPollutantValues.sort()  # Sort the values into order
+            medianValue = 0.0
+
+            # Find the centre value
+            if len(dailyPollutantValues) % 2 == 0:  # If even length
+                medianValue = (dailyPollutantValues[int(len(
+                    dailyPollutantValues) / 2)] + dailyPollutantValues[int(len(dailyPollutantValues) / 2) - 1])/2
+
             else:
-                medianValue = dailyPollutantValues[len(dailyPollutantValues)/2 - 1]    
-            
-            if pollutant == 'no':
-                # append to list and round to 5 dp
-                dailyMedianList.append(round(medianValue, 5))
-            elif pollutant == 'pm10':
-                # append to list and round to 3 dp
-                dailyMedianList.append(round(medianValue, 3))
-            elif pollutant == 'pm25':
-                # append to list and round to 3 dp
-                dailyMedianList.append(round(medianValue, 3))
+                medianValue = dailyPollutantValues[int(
+                    len(dailyPollutantValues)//2)]
+
+            dailyMedianList.append(round(medianValue, maximumNumDecimalPlaces))
+
+            dailyPollutantValues = []
+
         count += 1
 
     return dailyMedianList
@@ -221,16 +242,4 @@ def fill_missing_data(data: dict, new_value: int,  monitoring_station: str, poll
     # Your code goes here
 
 
-# main
-pollutionDictionary = dict()
-pollutionDictionary['harlington'] = readCSV(
-    "data/Pollution-London Harlington.csv")
-pollutionDictionary['marylebone road'] = readCSV(
-    "data/Pollution-London Marylebone Road.csv")
-pollutionDictionary['n kensington'] = readCSV(
-    "data/Pollution-London N Kensington.csv")
 
-print(daily_average(pollutionDictionary, 'harLington', 'pM25'))
-
-
-readCSV("data/Pollution-London Harlington.csv")
