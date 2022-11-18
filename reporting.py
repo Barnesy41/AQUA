@@ -225,6 +225,34 @@ def hourly_average(data: dict, monitoring_station: str, pollutant: str) -> list:
     """    
     #TODO test that the results of this function are correct
     
+    # Check for exceptions
+    checkExceptionString(monitoring_station)
+    checkExceptionString(pollutant)
+    checkExceptionDictionary(data)
+
+    # lowercase the parameters to avoid errors in case sensitivity
+    monitoring_station = monitoring_station.lower()
+    pollutant = pollutant.lower()
+
+    # Raise an exception if an unknown monitoring station is entered
+    # TODO not sure if this should be here? I would put this usually but not sure how code testing works, i dont think that this can
+    # be tested with the names of other monitoring stations though
+    # possibly remove? ask about it.
+    if monitoring_station != 'harlington':
+        if monitoring_station != 'marylebone road':
+            if monitoring_station != 'n kensington':
+                raise Exception("unexpected parameter! Parameter: monitoring_station: ", monitoring_station,
+                                "entered. expected: 'harlington', 'marylebone road', or 'n kensington'")
+
+    # Raise an exception if an unknown pollutant is enteredd
+    if pollutant != 'no':
+        if pollutant != 'pm10':
+            if pollutant != 'pm25':
+                raise Exception("unexpected paramater! Parameter: pollutant: ",
+                                pollutant, "entered. expected: 'no', 'pm10', or 'pm25'")
+                
+                
+                
     pollutantData = data[monitoring_station][pollutant] #Retrieve the list for the specific monitoring station and pollutant
     
     hourlyDict = {} #A dictionary containing each hour and the values
@@ -273,17 +301,105 @@ def hourly_average(data: dict, monitoring_station: str, pollutant: str) -> list:
             
         average = total/numberOfValues
         hourlyAvgList.append(round(average, maximumNumDecimalPlaces)) #Append the average hourly value to a list and round the value to the required number of decimal places
-        
-    print(hourlyAvgList)
+
     return hourlyAvgList #Returns the list of hourly averages
         
             
 
 
 def monthly_average(data: dict, monitoring_station: str, pollutant: str) -> list:
-    """Your documentation goes here"""
+    """returns a list/array with the hourly averages (i.e. 24 values) for a particular pollutant and monitoring station
 
-    # Your code goes here
+    Args:
+        data (dict): a dictionary containing the data for all monitoring stations
+        monitoring_station (str): the name of the monitoring station you would like to recieve pollutant data from
+        pollutant (str): the name of the pollutant that you would like to recieve data about
+
+    Returns:
+        list: a list containing the values of the average pollutant level for each hour of the day
+    """    
+    #TODO test that the results of this function are correct
+    
+    
+    
+    # Check for exceptions
+    checkExceptionString(monitoring_station)
+    checkExceptionString(pollutant)
+    checkExceptionDictionary(data)
+
+    # lowercase the parameters to avoid errors in case sensitivity
+    monitoring_station = monitoring_station.lower()
+    pollutant = pollutant.lower()
+
+    # Raise an exception if an unknown monitoring station is entered
+    # TODO not sure if this should be here? I would put this usually but not sure how code testing works, i dont think that this can
+    # be tested with the names of other monitoring stations though
+    # possibly remove? ask about it.
+    if monitoring_station != 'harlington':
+        if monitoring_station != 'marylebone road':
+            if monitoring_station != 'n kensington':
+                raise Exception("unexpected parameter! Parameter: monitoring_station: ", monitoring_station,
+                                "entered. expected: 'harlington', 'marylebone road', or 'n kensington'")
+
+    # Raise an exception if an unknown pollutant is enteredd
+    if pollutant != 'no':
+        if pollutant != 'pm10':
+            if pollutant != 'pm25':
+                raise Exception("unexpected paramater! Parameter: pollutant: ",
+                                pollutant, "entered. expected: 'no', 'pm10', or 'pm25'")
+                
+                
+                
+    pollutantData = data[monitoring_station][pollutant] #Retrieve the list for the specific monitoring station and pollutant
+    
+    monthlyDict = {} #A dictionary containing each month as a key and each key contains a list of the data values of a specific pollutant for that month
+    count = 0
+    for i in pollutantData:
+        #Add a new key if the current month is not already a key in the dictionary
+        
+        month = data[monitoring_station]['date'][count][5:7] #Gets only the month from the date in the pollution csv file
+        if month not in monthlyDict.keys(): 
+            monthlyDict[month] = [] #Creates a new dictionary key with an empty list value
+        
+        monthlyDict[month].append(i) #Add the current pollution data being iterated through to the correct month in the dictionary
+
+        count += 1
+        
+    # Find the number of decimal places the data is required to be
+    maximumNumDecimalPlaces = 0
+    for i in pollutantData:
+        try:
+            i = float(i)  # Only count data that can be converted to a float
+
+        except:
+            a = 1  # ignore other values
+
+        if type(i) == float:
+
+            i = str(i)
+            if len(i[i.rfind('.') + 1:]) > maximumNumDecimalPlaces:
+                # finds the number of digits after the decimal point
+                maximumNumDecimalPlaces = len(i[i.rfind('.') + 1:])
+
+
+
+    monthlyAvgList = []
+    average = 0
+    for key in monthlyDict:
+        
+        total = 0
+        numberOfValues = 0
+        for i in monthlyDict[key]:
+            try:
+                total += float(i)
+                numberOfValues += 1
+            except:
+                a = 1 #The value should be excluded
+            
+        average = total/numberOfValues
+        monthlyAvgList.append(round(average, maximumNumDecimalPlaces)) #Append the average hourly value to a list and round the value to the required number of decimal places
+        
+    return monthlyAvgList #Returns the list of hourly averages
 
 
 def peak_hour_date(data: dict, date: str, monitoring_station: str, pollutant: str) -> list:
@@ -305,3 +421,17 @@ def fill_missing_data(data: dict, new_value: int,  monitoring_station: str, poll
 
 
 # main
+pollutionDictionary = dict()
+pollutionDictionary['harlington'] = readCSV(
+    "data/Pollution-London Harlington.csv")
+pollutionDictionary['marylebone road'] = readCSV(
+    "data/Pollution-London Marylebone Road.csv")
+pollutionDictionary['n kensington'] = readCSV(
+    "data/Pollution-London N Kensington.csv")
+
+daily_average(pollutionDictionary, 'harLington', 'pM25')
+
+
+readCSV("data/Pollution-London Harlington.csv")
+
+monthly_average(pollutionDictionary, 'harLington', 'pM25')
