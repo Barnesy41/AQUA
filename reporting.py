@@ -498,6 +498,23 @@ def peak_hour_date(data: dict, date: str, monitoring_station: str, pollutant: st
 
 
 def count_missing_data(data: dict,  monitoring_station: str, pollutant: str) -> list:
+    """For a given monitoring station and pollutant, returns the number of 'No data' entries are there in the data.
+
+    Args:
+        data (dict): A dictionary containing the csv file data for each location
+        monitoring_station (str): the location you would like to search for pollutant data at
+        pollutant (str): the type of pollutant data you would like to search for
+
+    Raises:
+        Exception: Incorrect type for data parameter
+        Exception: Incorrect type for monitoring_station parameter
+        Exception: Incorrect type for pollutant parameter
+        Exception: Invalid monitoring station name input as parameter
+        Exception: Invalid pollutant name input as parameter
+
+    Returns:
+        int: Returns the number of times 'No data' was found inside the data input as a parameter
+    """
     # Check for exceptions
     checkExceptionString(monitoring_station)
     checkExceptionString(pollutant)
