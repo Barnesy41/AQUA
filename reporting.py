@@ -45,11 +45,26 @@ def daily_average(data:dict, monitoring_station:str, pollutant:str) -> list:
     checkExceptionString(pollutant)
     checkExceptionDictionary(data)
     
-    
-    
     #lowercase the parameters to avoid errors in case sensitivity
     monitoring_station = monitoring_station.lower()
     pollutant = pollutant.lower()
+    
+    #Raise an exception if an unknown monitoring station is entered
+    ###not sure if this should be here? I would put this usually but not sure how code testing works, i dont think that this can
+    ###be tested with the names of other monitoring stations though
+    ###possibly remove? ask about it.
+    if monitoring_station != 'harlington':
+        if monitoring_station != 'marylebone road':
+            if monitoring_station != 'n kensington':
+                raise Exception("unexpected parameter! Parameter: monitoring_station: ", monitoring_station, "entered. expected: 'harlington', 'marylebone road', or 'n kensington'")
+    
+    #Raise an exception if an unknown pollutant is enteredd
+    if pollutant != 'no':
+        if pollutant != 'pm10':
+            if pollutant != 'pm25':
+                raise Exception("unexpected paramater! Parameter: pollutant: ", pollutant, "entered. expected: 'no', 'pm10', or 'pm25'")
+    
+
     
     pollutantData = data[monitoring_station.lower()][pollutant]
 
@@ -105,3 +120,19 @@ def fill_missing_data(data:dict, new_value:int,  monitoring_station:str,pollutan
     """Your documentation goes here"""
     
     ## Your code goes here
+
+
+
+
+
+
+#main
+pollutionDictionary = dict()
+pollutionDictionary['harlington'] = readCSV("data/Pollution-London Harlington.csv")
+pollutionDictionary['marylebone road'] = readCSV("data/Pollution-London Marylebone Road.csv")
+pollutionDictionary['n kensington'] = readCSV("data/Pollution-London N Kensington.csv")
+
+print(daily_average(pollutionDictionary, 'harLington', 'pM25'))
+
+
+readCSV("data/Pollution-London Harlington.csv")
