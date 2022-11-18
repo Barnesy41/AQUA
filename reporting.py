@@ -308,7 +308,7 @@ def hourly_average(data: dict, monitoring_station: str, pollutant: str) -> list:
 
 
 def monthly_average(data: dict, monitoring_station: str, pollutant: str) -> list:
-    """returns a list/array with the hourly averages (i.e. 24 values) for a particular pollutant and monitoring station
+    """returns a list/array with the monthly averages (i.e. 12 values) for a particular pollutant and monitoring station
 
     Args:
         data (dict): a dictionary containing the data for all monitoring stations
@@ -316,7 +316,7 @@ def monthly_average(data: dict, monitoring_station: str, pollutant: str) -> list
         pollutant (str): the name of the pollutant that you would like to recieve data about
 
     Returns:
-        list: a list containing the values of the average pollutant level for each hour of the day
+        list: a list containing the values of the average pollutant level for each month of the year
     """    
     #TODO test that the results of this function are correct
     
