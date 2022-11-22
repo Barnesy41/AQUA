@@ -188,8 +188,6 @@ def find_cyan_pixels(map_filename, upper_threshold=100, lower_threshold=50):
 
 
 
-# newImage.save('data/map-cyan-pixels.jpg')
-# if (blue > upper_threshold and green > upper_threshold and red < lower_threshold):
 def detect_connected_components(map_filename):
     print("detecting connected components...")  # test
 
@@ -213,7 +211,8 @@ def detect_connected_components(map_filename):
     # Converts the python list to a numpy array
     visitedArray = np.array(visitedArray)
 
-    Queue = []  # initalise the Queue TODO change to numpy
+    QueueRow = np.array([]) # initalise the Queue TODO change to numpy
+    QueueColumn = np.array([]) # initalise the Queue TODO change to numpy
 
     connectedRegionNumPixels = []  # Stores the number of pixels in each connected region
     numberOfConnectedComponents = 0  # Stores the total number of connected components
@@ -221,6 +220,8 @@ def detect_connected_components(map_filename):
     # create the cc-output-2a.txt file if it does not exist, or open the file if it does not already exist
     outputFile = open("cc-output-2a.txt", 'w')
     outputFile.truncate(0)  # Clear the python file if it already exists
+    startOfQueueIndex = 0
+    queueNextPointer = 0
 
     for row in range(0, height):  # iterates through each row of pixels stored within imageArray
         # iterates through each column of pixels stored within imageArray
@@ -233,24 +234,29 @@ def detect_connected_components(map_filename):
                 numPixels += 1  # increment the number of pixels in the component
                 
                 # add the node to the nodes to visit
-                Queue.append((row, column))
+                QueueRow = np.append(QueueRow,row)
+                QueueColumn = np.append(QueueColumn,column)
                 
-                while len(Queue) != 0:  # loop while the queue contains data
-                    item = Queue.pop(0)  # Remove the next item from the queue
+                while len(QueueRow) != 0:  # loop while the queue contains data
+                    item = (QueueRow[startOfQueueIndex], QueueColumn[startOfQueueIndex])  # Remove the next item from the queue
+                    QueueRow = np.delete(QueueRow,startOfQueueIndex)
+                    QueueColumn = np.delete(QueueColumn,startOfQueueIndex)
                     
                     #initalise a list which can be used to calculate the position of the 8 pixels surrounding the pixel popped from the queue
                     list = [(-1, -1), (-1, 0), (-1, 1), (0, -1),
                             (0, 1), (1, -1), (1, 0), (1, 1)]
 
                     for i in range(0, 8):
-                        pixelToCheckRow = item[0]
-                        pixelToCheckColumn = item[1]
+                        pixelToCheckRow = int(item[0])
+                        pixelToCheckColumn = int(item[1])
                         if pixelToCheckRow+(list[i])[0] < height and pixelToCheckRow+(list[i])[0] >= 0 and pixelToCheckColumn + (list[i])[1] < width and pixelToCheckColumn + (list[i])[1] >= 0:
                             rowToCheck = pixelToCheckRow + (list[i])[0]
                             columnToCheck = pixelToCheckColumn + (list[i])[1]
                             
                             if ((imageArray[rowToCheck][columnToCheck])[0] >= 128) and ((imageArray[rowToCheck][columnToCheck])[1] >= 128) and ((imageArray[rowToCheck][columnToCheck])[2] >= 128) and (visitedArray[rowToCheck][columnToCheck] == 0):
-                                Queue.append((rowToCheck, columnToCheck))
+                                QueueRow = np.append(QueueRow,rowToCheck)
+                                QueueColumn = np.append(QueueColumn,columnToCheck)
+                                
                                 numPixels += 1
                                 visitedArray[rowToCheck][columnToCheck] = 1  # mark the pixel as visited
                 numberOfConnectedComponents += 1  # Increment the number of connected components
@@ -264,11 +270,9 @@ def detect_connected_components(map_filename):
                 outputFile.write("Connected Component " + str(
                     numberOfConnectedComponents) + ", number of pixels = " + str(numPixels) + "\n")
 
-    # Calculate the total number of connected particles
-    totalNumConnectedParticles = countvalue(visitedArray.flatten(), 1)
     # write the total number of pixels to the end of the output file
     outputFile.write("Total number of connected components = " +
-                     str(totalNumConnectedParticles))
+                     str(numberOfConnectedComponents))
 
     MARK = visitedArray
     return MARK
@@ -282,11 +286,14 @@ def detect_connected_components(map_filename):
 def detect_connected_components_sorted(MARK):
     """Your documentation goes here"""
     # Your code goes here
+    print(MARK)
 
 
 # TESTING START
 detect_connected_components("map-red-pixels.jpg")
 find_cyan_pixels("map.png")
+
+detect_connected_components_sorted(detect_connected_components("map-red-pixels.jpg"))
 
 '''#test
     f = open('testOutputArray.txt','w')
@@ -297,4 +304,7 @@ find_cyan_pixels("map.png")
         f.write("\n")
     f.close()
     #test end'''
+    
+# Calculate the total number of connected particles
+#totalNumConnectedParticles = countvalue(visitedArray.flatten(), 1)
 # test end
