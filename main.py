@@ -28,18 +28,16 @@ def intelligence_menu():
         userInput = input("\nEnter an option from above: ")
 
         if userInput.lower() == 'frp':
-            find_red_pixels(input("enter the map file name"), input(
-                "enter the upper threshold"), input("enter the lower threshold"))
+            find_red_pixels(input("enter the map file name (stored in data folder)"))
         if userInput.lower() == 'fcp':
-            find_cyan_pixels(input("enter the map file name"), input(
-                "enter the upper threshold"), input("enter the lower threshold"))
+            find_cyan_pixels(input("enter the map file name"))
         if userInput.lower() == 'dcc':
-            detect_connected_components(input("enter the map file name"))
+            detect_connected_components(input("enter the map file name (stored in the data folder)"))
         if userInput.lower() == 'dccs':
-            detect_connected_components_sorted(
-                input("enter the map file name"))
+            detect_connected_components_sorted(detect_connected_components(
+                input("enter the map file name (stored in the data folder)")))
         if userInput.lower() == 'q':
-            quit()
+            break
 
 
 def about():
