@@ -75,7 +75,7 @@ def find_red_pixels(map_filename, upper_threshold=100, lower_threshold=50):
         # iterates through each row of pixels stored within the originalImage object
         for row in range(0, height):
 
-            # unpacks the tuple into seperate variables dependant on if the format is RGB or RGBA
+            # unpacks the tuple into separate variables dependant on if the format is RGB or RGBA
             if (len(originalImageArr[row, column]) == 4):
                 red, green, blue, a = originalImageArr[row, column]
 
@@ -93,7 +93,7 @@ def find_red_pixels(map_filename, upper_threshold=100, lower_threshold=50):
 
     return newImageArr  # return the resultant image as a 2D numpy array
 
-    # TODO check this works properly as it has been chaged since last test
+    # TODO check this works properly as it has been changed since last test
     # TODO make binary image
 
 
@@ -103,7 +103,7 @@ def find_cyan_pixels(map_filename, upper_threshold=100, lower_threshold=50):
     Args:
         map_filename (str): The name of the map file that should be read
         upper_threshold (int): Defaults to 100. The lowest (exclusive) blue RGB value for the pixel to be considered cyan
-        lower_threshold (int): Defaults to 50. the heighest (exclusive) green/red RGB value for the pixel to be considered cyan
+        lower_threshold (int): Defaults to 50. the highest (exclusive) green/red RGB value for the pixel to be considered cyan
 
     Outputs:
         file: A file map-cyan-pixels.jpg in the data file
@@ -167,7 +167,7 @@ def find_cyan_pixels(map_filename, upper_threshold=100, lower_threshold=50):
         # iterates through each row of pixels stored within the originalImage object
         for row in range(0, height):
 
-            # Unpack the rgb values into seperate variables
+            # Unpack the rgb values into separate variables
             red, green, blue, alpha = originalImageArr[row, column]
 
             # Checks that the pixel in row,colum is within the threshold to be considered red and if so inserts a white pixel into the new RGB image in the same location
@@ -179,7 +179,7 @@ def find_cyan_pixels(map_filename, upper_threshold=100, lower_threshold=50):
 
     return newImageArr  # return the resultant image as a 2D numpy array
 
-    # TODO check this works properly as it has been chaged since last test
+    # TODO check this works properly as it has been changed since last test
 
 
 def detect_connected_components(map_filename):
@@ -193,8 +193,8 @@ def detect_connected_components(map_filename):
 
     Returns:
         nd array: a numpy nd array containing the component number and number of pixels contained within that component
-    """    
-    
+    """
+
     image = skimage.io.imread('data/'+map_filename)
     # convert the image to an array of individual pixels
     imageArray = np.array(image)
@@ -215,8 +215,8 @@ def detect_connected_components(map_filename):
     # Converts the python list to a numpy array
     visitedArray = np.array(visitedArray)
 
-    QueueRow = np.array([])  # initalise the Queue
-    QueueColumn = np.array([])  # initalise the Queue
+    QueueRow = np.array([])  # initialise the Queue
+    QueueColumn = np.array([])  # initialise the Queue
 
     connectedRegionNumPixels = []  # Stores the number of pixels in each connected region
     numberOfConnectedComponents = 0  # Stores the total number of connected components
@@ -225,7 +225,7 @@ def detect_connected_components(map_filename):
     outputFile = open("cc-output-2a.txt", 'w')
     outputFile.truncate(0)  # Clear the python file if it already exists
     startOfQueueIndex = 0
-    queueNextPointer = 0 #TODO the queue could get too large and cause a crash?
+    queueNextPointer = 0  # TODO the queue could get too large and cause a crash?
 
     for row in range(0, height):  # iterates through each row of pixels stored within imageArray
         # iterates through each column of pixels stored within imageArray
@@ -233,59 +233,61 @@ def detect_connected_components(map_filename):
 
             # Checks if the pixel is white and has not been visited
             if ((imageArray[row][column])[0] >= 128) and ((imageArray[row][column])[1] >= 128) and ((imageArray[row][column])[2] >= 128) and ((visitedArray[row][column]) == 0):
-                numPixels = 0 #set the number of pixels in the current component to zero
+                numPixels = 0  # set the number of pixels in the current component to zero
                 numPixels += 1  # increment the number of pixels in the component
-                
-                numberOfConnectedComponents += 1  # Increment the total number of connected components (this is also the current component number)
-                visitedArray[row][column] = numberOfConnectedComponents  # mark the pixel as visited with the number set being the component number
-            
+
+                # Increment the total number of connected components (this is also the current component number)
+                numberOfConnectedComponents += 1
+                # mark the pixel as visited with the number set being the component number
+                visitedArray[row][column] = numberOfConnectedComponents
+
                 # add the node to the nodes to visit
                 QueueRow = np.append(QueueRow, row)
                 QueueColumn = np.append(QueueColumn, column)
 
                 while len(QueueRow) != 0:  # loop while the queue contains pixels to visit
-                    
+
                     # Remove the next item from the queue and store in the variable item
                     item = (QueueRow[startOfQueueIndex],
                             QueueColumn[startOfQueueIndex])
                     QueueRow = np.delete(QueueRow, startOfQueueIndex)
                     QueueColumn = np.delete(QueueColumn, startOfQueueIndex)
 
-                    # initalise a list which can be used to calculate the position of the 8 pixels surrounding the pixel popped from the queue
+                    # initialise a list which can be used to calculate the position of the 8 pixels surrounding the pixel popped from the queue
                     list = [(-1, -1), (-1, 0), (-1, 1), (0, -1),
                             (0, 1), (1, -1), (1, 0), (1, 1)]
 
                     for i in range(0, 8):
-                        
-                        #Store the row and column of the current pixel in two seperate variables
+
+                        # Store the row and column of the current pixel in two separate variables
                         pixelToCheckRow = int(item[0])
                         pixelToCheckColumn = int(item[1])
-                        
-                        #Checks if the pixel to check is a valid pixel (the row/column is not out of the bounds of the image)
+
+                        # Checks if the pixel to check is a valid pixel (the row/column is not out of the bounds of the image)
                         if pixelToCheckRow+(list[i])[0] < height and pixelToCheckRow+(list[i])[0] >= 0 and pixelToCheckColumn + (list[i])[1] < width and pixelToCheckColumn + (list[i])[1] >= 0:
                             rowToCheck = pixelToCheckRow + (list[i])[0]
                             columnToCheck = pixelToCheckColumn + (list[i])[1]
 
-                            #Checks if the pixel is white and if so adds the pixel to the queue of pixels to visit the 8-connected pixels
+                            # Checks if the pixel is white and if so adds the pixel to the queue of pixels to visit the 8-connected pixels
                             if ((imageArray[rowToCheck][columnToCheck])[0] >= 128) and ((imageArray[rowToCheck][columnToCheck])[1] >= 128) and ((imageArray[rowToCheck][columnToCheck])[2] >= 128) and (visitedArray[rowToCheck][columnToCheck] == 0):
                                 QueueRow = np.append(QueueRow, rowToCheck)
                                 QueueColumn = np.append(
                                     QueueColumn, columnToCheck)
 
-                                numPixels += 1 #Increment the number of pixels in the current component
-                                visitedArray[rowToCheck][columnToCheck] = numberOfConnectedComponents # mark the pixel as visited with the number set being the component number
+                                numPixels += 1  # Increment the number of pixels in the current component
+                                # mark the pixel as visited with the number set being the component number
+                                visitedArray[rowToCheck][columnToCheck] = numberOfConnectedComponents
 
                 # calculate the size of the new connected region and append to an array
                 connectedRegionNumPixels.append(numPixels)
-                
+
                 # Output the connected component number and the number of pixels contained within the component
                 print("Connected Component " + str(numberOfConnectedComponents) +
                       ", number of pixels = " + str(numPixels))
-                
-                #Write the connected component number and the number of pixels within the component into a file
+
+                # Write the connected component number and the number of pixels within the component into a file
                 outputFile.write("Connected Component " + str(
                     numberOfConnectedComponents) + ", number of pixels = " + str(numPixels) + "\n")
-                
 
     # write the total number of pixels to the end of the output file
     outputFile.write("Total number of connected components = " +
@@ -303,64 +305,68 @@ def detect_connected_components_sorted(MARK):
     Your documentation goes here
     """
     # Your code goes here
-    fileToReadFrom = open("cc-output-2a.txt",'r')
-    
-    #Store the connected components in a sorted list
+    fileToReadFrom = open("cc-output-2a.txt", 'r')
+
+    # Store the connected components in a sorted list
     unsortedComponents = []
     sortedComponents = []
     for line in fileToReadFrom:
         line = line.rstrip()
-        
-        try: #Ignores blank lines at the bottom of documents
-            componentNumber = int(line[20:line.index(',')]) #Gets the component number from each line in the txt file and store as integer value
-            numPixels = int(line[line.index('=')+2:]) #Gets the number of pixels in each component from each line in the txt file and stores as integer value
+
+        try:  # Ignores blank lines at the bottom of documents
+            # Gets the component number from each line in the txt file and store as integer value
+            componentNumber = int(line[20:line.index(',')])
+            # Gets the number of pixels in each component from each line in the txt file and stores as integer value
+            numPixels = int(line[line.index('=')+2:])
             unsortedComponents.append((numPixels, componentNumber))
         except:
             False
-        
-    #Sorting Algorithm
+
+    # Sorting Algorithm
     for i in unsortedComponents:
-        if len(sortedComponents) == 0: #Append the first element to the sorted list
+        if len(sortedComponents) == 0:  # Append the first element to the sorted list
             sortedComponents.append(i)
-        else: #Search through all elements in the list until the current number of pixels is greater than the one found then insert into that position
+        else:  # Search through all elements in the list until the current number of pixels is greater than the one found then insert into that position
             isComponentInserted = False
             count = 0
             while isComponentInserted == False:
-                if ( (count == len(sortedComponents)) ):
+                if ((count == len(sortedComponents))):
                     sortedComponents.append(i)
                     isComponentInserted = True
-                elif ( (i[0] > sortedComponents[count][0]) ):
-                    sortedComponents.insert(sortedComponents.index(sortedComponents[count]), i)
+                elif ((i[0] > sortedComponents[count][0])):
+                    sortedComponents.insert(
+                        sortedComponents.index(sortedComponents[count]), i)
                     isComponentInserted = True
                 count += 1
-                
-    #Write results to the output file
-    fileToWriteTo = open ("cc-output-2b.txt",'w')
+
+    # Write results to the output file
+    fileToWriteTo = open("cc-output-2b.txt", 'w')
     for item in sortedComponents:
         fileToWriteTo.write("Connected Component " + str(
-                    item[1]) + ", number of pixels = " + str(item[0]) + "\n")
-        
+            item[1]) + ", number of pixels = " + str(item[0]) + "\n")
+
         print("Connected Component " + str(
-                    item[1]) + ", number of pixels = " + str(item[0])) #Output the results to the terminal
-    
-    #Create an image containing the 2 largest connected components
-    #Get the height and width the image should be
+            item[1]) + ", number of pixels = " + str(item[0]))  # Output the results to the terminal
+
+    # Create an image containing the 2 largest connected components
+    # Get the height and width the image should be
     imageHeight = len(MARK)
     imageWidth = len(MARK[0])
-    
-    #Store the values of the top 2 component numbers in 2 seperate variables
+
+    # Store the values of the top 2 component numbers in 2 separate variables
     top1ComponentNum = sortedComponents[0][1]
     top2ComponentNum = sortedComponents[1][1]
-    
+
     image = []
-    for row in range(0,imageHeight):
+    for row in range(0, imageHeight):
         imageRow = []
-        for column in range(0,imageWidth): #Search through each row of the image appending white rgb values to pixels which match the connected component number of the component with the largest 2 number of pixels in the component
+        for column in range(0, imageWidth):  # Search through each row of the image appending white rgb values to pixels which match the connected component number of the component with the largest 2 number of pixels in the component
             if (MARK[row][column] == top1ComponentNum) or (MARK[row][column] == top2ComponentNum):
-                imageRow.append((255,255,255))
+                imageRow.append((255, 255, 255))
             else:
-                imageRow.append((0,0,0))
-        image.append(imageRow) #Append the filled in row to the image
-    
-    image = np.array(image) #Convert the list into an ndarray
-    skimage.io.imsave('data/cc-top-2.jpg', image.astype(np.uint8)) #Save the image as .jpg
+                imageRow.append((0, 0, 0))
+        image.append(imageRow)  # Append the filled in row to the image
+
+    image = np.array(image)  # Convert the list into an NDarray
+    # Save the image as .jpg
+    skimage.io.imsave('data/cc-top-2.jpg', image.astype(np.uint8))
