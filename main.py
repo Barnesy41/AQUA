@@ -5,7 +5,7 @@ from intelligence import find_red_pixels, find_cyan_pixels, detect_connected_com
 def main_menu():
     """shows the main menu of the program"""
     print("R - Access the PR module\n"
-          "I - Access the MI moudle\n"
+          "I - Access the MI module\n"
           "M - Access the RM module\n"
           "A - Print the About text.\n"
           "Q - Quit the application")
@@ -17,7 +17,7 @@ def monitoring_menu():
 
 
 def intelligence_menu():
-    """Allows the user to choose the necissary options for the intelligence module of the program then return back to the main menu when required"""
+    """Allows the user to choose the necessary options for the intelligence module of the program then return back to the main menu when required"""
 
     while True:
         print("\n\n\nFRP - Find all of the red pixels in a given image\n"
@@ -28,11 +28,13 @@ def intelligence_menu():
         userInput = input("\nEnter an option from above: ")
 
         if userInput.lower() == 'frp':
-            find_red_pixels(input("enter the map file name (stored in data folder)"))
+            find_red_pixels(
+                input("enter the map file name (stored in data folder)"))
         if userInput.lower() == 'fcp':
             find_cyan_pixels(input("enter the map file name"))
         if userInput.lower() == 'dcc':
-            detect_connected_components(input("enter the map file name (stored in the data folder)"))
+            detect_connected_components(
+                input("enter the map file name (stored in the data folder)"))
         if userInput.lower() == 'dccs':
             detect_connected_components_sorted(detect_connected_components(
                 input("enter the map file name (stored in the data folder)")))
@@ -41,7 +43,7 @@ def intelligence_menu():
 
 
 def about():
-    """Outputs the course code and candidate number as two seperate strings"""
+    """Outputs the course code and candidate number as two separate strings"""
     print("ECM1400", "243352")
 
 
