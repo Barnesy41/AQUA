@@ -74,7 +74,7 @@ def daily_average(data: dict, monitoring_station: str, pollutant: str) -> list:
     if pollutant != 'no':
         if pollutant != 'pm10':
             if pollutant != 'pm25':
-                raise Exception("unexpected paramater! Parameter: pollutant: ",
+                raise Exception("unexpected parameter! Parameter: pollutant: ",
                                 pollutant, "entered. expected: 'no', 'pm10', or 'pm25'")
 
     pollutantData = data[monitoring_station.lower()][pollutant]
@@ -127,7 +127,7 @@ def daily_median(data: dict, monitoring_station: str, pollutant: str) -> list:
         Exception: Raises an exception if an invalid monitoring station is input
         Exception: Raises an exception of the data input as a parameter is not a dictionary
         Exception: Raises an exception if the monitoring_station parameter is not a string
-        Exception: Raises an exeption if the pollutant parameter is not a string
+        Exception: Raises an exception if the pollutant parameter is not a string
 
     Returns:
         list: a list containing the daily median pollutant data for a given pollutant and monitoring station
@@ -159,7 +159,7 @@ def daily_median(data: dict, monitoring_station: str, pollutant: str) -> list:
     if pollutant != 'no':
         if pollutant != 'pm10':
             if pollutant != 'pm25':
-                raise Exception("unexpected paramater! Parameter: pollutant: ",
+                raise Exception("unexpected parameter! Parameter: pollutant: ",
                                 pollutant, "entered. expected: 'no', 'pm10', or 'pm25'")
 
     pollutantData = data[monitoring_station.lower()][pollutant]
@@ -218,8 +218,8 @@ def hourly_average(data: dict, monitoring_station: str, pollutant: str) -> list:
 
     Args:
         data (dict): a dictionary containing the data for all monitoring stations
-        monitoring_station (str): the name of the monitoring station you would like to recieve pollutant data from
-        pollutant (str): the name of the pollutant that you would like to recieve data about
+        monitoring_station (str): the name of the monitoring station you would like to receive pollutant data from
+        pollutant (str): the name of the pollutant that you would like to receive data about
 
     Returns:
         list: a list containing the values of the average pollutant level for each hour of the day
@@ -249,7 +249,7 @@ def hourly_average(data: dict, monitoring_station: str, pollutant: str) -> list:
     if pollutant != 'no':
         if pollutant != 'pm10':
             if pollutant != 'pm25':
-                raise Exception("unexpected paramater! Parameter: pollutant: ",
+                raise Exception("unexpected parameter! Parameter: pollutant: ",
                                 pollutant, "entered. expected: 'no', 'pm10', or 'pm25'")
 
     # Retrieve the list for the specific monitoring station and pollutant
@@ -312,8 +312,8 @@ def monthly_average(data: dict, monitoring_station: str, pollutant: str) -> list
 
     Args:
         data (dict): a dictionary containing the data for all monitoring stations
-        monitoring_station (str): the name of the monitoring station you would like to recieve pollutant data from
-        pollutant (str): the name of the pollutant that you would like to recieve data about
+        monitoring_station (str): the name of the monitoring station you would like to receive pollutant data from
+        pollutant (str): the name of the pollutant that you would like to receive data about
 
     Returns:
         list: a list containing the values of the average pollutant level for each month of the year
@@ -339,11 +339,11 @@ def monthly_average(data: dict, monitoring_station: str, pollutant: str) -> list
                 raise Exception("unexpected parameter! Parameter: monitoring_station: ", monitoring_station,
                                 "entered. expected: 'harlington', 'marylebone road', or 'n kensington'")
 
-    # Raise an exception if an unknown pollutant is enteredd
+    # Raise an exception if an unknown pollutant is entered
     if pollutant != 'no':
         if pollutant != 'pm10':
             if pollutant != 'pm25':
-                raise Exception("unexpected paramater! Parameter: pollutant: ",
+                raise Exception("unexpected parameter! Parameter: pollutant: ",
                                 pollutant, "entered. expected: 'no', 'pm10', or 'pm25'")
 
     # Retrieve the list for the specific monitoring station and pollutant
@@ -407,13 +407,14 @@ def peak_hour_date(data: dict, date: str, monitoring_station: str, pollutant: st
     Args:
         data (dict): a dictionary containing the data for all monitoring stations
         date (str): a string containing the date that you would like to search for the peak hourly pollution
-        monitoring_station (str): the name of the monitoring station you would like to recieve pollutant data from
-        pollutant (str): the name of the pollutant that you would like to recieve data about
+        monitoring_station (str): the name of the monitoring station you would like to receive pollutant data from
+        pollutant (str): the name of the pollutant that you would like to receive data about
 
     Returns:
         tuple: a tuple containing the hour that the peak pollution level was found and the peak pollution level e.g. (12:00, 14.8)
     """
     # TODO test that the results of this function are correct
+    # TODO check that the date entered is within the dates of the data set
 
     # Check for exceptions
     checkExceptionString(monitoring_station)
@@ -436,11 +437,11 @@ def peak_hour_date(data: dict, date: str, monitoring_station: str, pollutant: st
                 raise Exception("unexpected parameter! Parameter: monitoring_station: ", monitoring_station,
                                 "entered. expected: 'harlington', 'marylebone road', or 'n kensington'")
 
-    # Raise an exception if an unknown pollutant is enteredd
+    # Raise an exception if an unknown pollutant is entered
     if pollutant != 'no':
         if pollutant != 'pm10':
             if pollutant != 'pm25':
-                raise Exception("unexpected paramater! Parameter: pollutant: ",
+                raise Exception("unexpected parameter! Parameter: pollutant: ",
                                 pollutant, "entered. expected: 'no', 'pm10', or 'pm25'")
 
     # Retrieve the list for the specific monitoring station and pollutant
@@ -534,25 +535,25 @@ def count_missing_data(data: dict,  monitoring_station: str, pollutant: str) -> 
                 raise Exception("unexpected parameter! Parameter: monitoring_station: ", monitoring_station,
                                 "entered. expected: 'harlington', 'marylebone road', or 'n kensington'")
 
-    # Raise an exception if an unknown pollutant is enteredd
+    # Raise an exception if an unknown pollutant is entered
     if pollutant != 'no':
         if pollutant != 'pm10':
             if pollutant != 'pm25':
-                raise Exception("unexpected paramater! Parameter: pollutant: ",
+                raise Exception("unexpected parameter! Parameter: pollutant: ",
                                 pollutant, "entered. expected: 'no', 'pm10', or 'pm25'")
 
     # Retrieve the list for the specific monitoring station and pollutant
     pollutantData = data[monitoring_station][pollutant]
-    
+
     total = 0
     for i in pollutantData:
         if i == 'No data':
             total += 1
-    
+
     return total
 
 
-def fill_missing_data(data: dict, new_value: int,  monitoring_station: str, pollutant: str) -> list:
+def fill_missing_data(data: dict, new_value: float,  monitoring_station: str, pollutant: str) -> list:
     # Check for exceptions
     checkExceptionString(monitoring_station)
     checkExceptionString(pollutant)
@@ -565,6 +566,7 @@ def fill_missing_data(data: dict, new_value: int,  monitoring_station: str, poll
     # Raise an exception if an unknown monitoring station is entered
     # TODO not sure if this should be here? I would put this usually but not sure how code testing works, i dont think that this can
     # be tested with the names of other monitoring stations though
+    # TODO accept new_value as float
     # possibly remove? ask about it.
     if monitoring_station != 'harlington':
         if monitoring_station != 'marylebone road':
@@ -572,16 +574,16 @@ def fill_missing_data(data: dict, new_value: int,  monitoring_station: str, poll
                 raise Exception("unexpected parameter! Parameter: monitoring_station: ", monitoring_station,
                                 "entered. expected: 'harlington', 'marylebone road', or 'n kensington'")
 
-    # Raise an exception if an unknown pollutant is enteredd
+    # Raise an exception if an unknown pollutant is entered
     if pollutant != 'no':
         if pollutant != 'pm10':
             if pollutant != 'pm25':
-                raise Exception("unexpected paramater! Parameter: pollutant: ",
+                raise Exception("unexpected parameter! Parameter: pollutant: ",
                                 pollutant, "entered. expected: 'no', 'pm10', or 'pm25'")
 
     # Retrieve the list for the specific monitoring station and pollutant
     pollutantData = data[monitoring_station][pollutant]
-    
+
     for i in range(0, len(pollutantData)):
         if pollutantData[i] == 'No data':
             pollutantData[i] = new_value
@@ -590,31 +592,5 @@ def fill_missing_data(data: dict, new_value: int,  monitoring_station: str, poll
     return data
 
 
-# test start
 
-'''
-pollutionDictionary = dict()
-pollutionDictionary['harlington'] = readCSV(
-    "data/Pollution-London Harlington.csv")
-pollutionDictionary['marylebone road'] = readCSV(
-    "data/Pollution-London Marylebone Road.csv")
-pollutionDictionary['n kensington'] = readCSV(
-    "data/Pollution-London N Kensington.csv")
-
-daily_average(pollutionDictionary, 'harLington', 'pM25')
-
-
-readCSV("data/Pollution-London Harlington.csv")
-
-monthly_average(pollutionDictionary, 'harLington', 'pM25')
-
-peak_hour_date(pollutionDictionary, '2021-11-18', 'harLington', 'pM25')
-
-count_missing_data(pollutionDictionary, 'harLington', 'pM25')
-
-fill_missing_data(pollutionDictionary, 0, 'harlINGton', 'pm25')
-count_missing_data(fill_missing_data(pollutionDictionary, 0, 'harlINGton', 'pm25'), 'harlINGTon', 'pM25')
-#test end
-'''
-
-#TODO allow the monitoring_station parameter to also be the code or the full name etc
+# TODO allow the monitoring_station parameter to also be the code or the full name etc
