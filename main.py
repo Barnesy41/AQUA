@@ -1,6 +1,6 @@
 from reporting import readCSV, daily_average, daily_median, hourly_average, monthly_average, peak_hour_date, count_missing_data, fill_missing_data
 from intelligence import find_red_pixels, find_cyan_pixels, detect_connected_components, detect_connected_components_sorted
-
+from monitoring import showSpeciesInfo
 
 def main_menu():
     """shows the main menu of the program"""
@@ -13,7 +13,46 @@ def main_menu():
 
 def monitoring_menu():
     """Your documentation goes here"""
-    # TODO implement this functionality
+    
+    exitModule = False #A flag used to exit this module when set to True
+    while exitModule == False:
+        
+        #Get the user to input the desired sub-division of the monitoring module
+        userInput = input("Enter a sub-division of the monitoring module (SSI, Q):").lower()
+             
+        #Access the show species information function of the module
+        if userInput == "ssi":
+            whitelistOfPollutants = ['NO2', 'CO', 'O3', 'PM10', 'SO2', 'PM25'] #Stores a list of the whitelisted pollutants ('Q' is used to quit the module therefore cannot be whitelisted)
+            
+            #Asks the user to select the desired pollutant to get information about
+            pollutant = input("Enter a species code to show ('NO2', 'CO', 'O3', 'PM10', 'SO2', 'PM25') or 'Q' to quit: ").upper()
+            
+            # re-input if an unknown pollutant is entered
+            while pollutant not in whitelistOfPollutants:
+                #Break the loop if the pollutant == 'Q'
+                if pollutant == "Q":
+                    break
+                
+                #Request a new input
+                print("Invalid input.")
+                pollutant = input("Enter a species code to show ('NO2', 'CO', '03', 'PM10', 'SO2', 'PM25') or 'Q' to quit: ").upper()
+            
+            #Quit this menu if desired
+            if pollutant == "Q":
+                break
+            
+            #Show the species information
+            showSpeciesInfo(pollutant)
+        
+        #Quit this menu
+        elif userInput == "q": #Quit the menu
+            break
+        
+        else:
+            print("Invalid input")
+    
+    #Output information about each pollutant when selected
+    
 
 
 def intelligence_menu():
