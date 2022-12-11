@@ -1,6 +1,6 @@
 from reporting import readCSV, daily_average, daily_median, hourly_average, monthly_average, peak_hour_date, count_missing_data, fill_missing_data
 from intelligence import find_red_pixels, find_cyan_pixels, detect_connected_components, detect_connected_components_sorted
-from monitoring import showSpeciesInfo
+from monitoring import showSpeciesInfo, showAllSpeciesInfo, outputAllMonitoringStations
 
 def main_menu():
     """shows the main menu of the program"""
@@ -10,7 +10,12 @@ def main_menu():
           "A - Print the About text.\n"
           "Q - Quit the application")
 
-
+def outputMonitoringMenuOptions():
+    '''Displays the menu options for the monitoring module inside the terminal window'''
+    print("SSI - Show information about a specific pollutant species\n"
+          "SASI - Show the information about all pollutant species\n"
+          "OAMS - Outputs all of the monitoring stations and their site codes within London\n")
+    
 def monitoring_menu():
     """Your documentation goes here"""
     
@@ -18,7 +23,8 @@ def monitoring_menu():
     while exitModule == False:
         
         #Get the user to input the desired sub-division of the monitoring module
-        userInput = input("Enter a sub-division of the monitoring module (SSI, Q):").lower()
+        outputMonitoringMenuOptions()
+        userInput = input("Enter a sub-division of the monitoring module (e.g. 'SSI'):").lower()
              
         #Access the show species information function of the module
         if userInput == "ssi":
@@ -44,6 +50,14 @@ def monitoring_menu():
             #Show the species information
             showSpeciesInfo(pollutant)
         
+        #Show the information for all pollutant species
+        elif userInput == "sasi":
+            showAllSpeciesInfo()
+        
+        #Display the names and site codes of all London-based monitoring stations inside the terminal
+        elif userInput == 'OAMS':
+            outputAllMonitoringStations()
+            
         #Quit this menu
         elif userInput == "q": #Quit the menu
             break

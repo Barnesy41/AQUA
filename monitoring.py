@@ -132,8 +132,15 @@ def testFunc(site_code='MY1', species_code='NO', start_date=None, end_date=None)
 
 #testFunc()
 
-def showSpeciesInfo(SpeciesCode):
-    """Your documentation goes here"""
+def showSpeciesInfo(SpeciesCode:str) -> dict:
+    """Displays the information about a given pollutant species in the terminal and returns a dictionary of information about the species
+
+    Parameters:
+    SpeciesCode : str
+    
+    Returns:
+        dict: A dictionary of pollutant species information
+    """ 
     import requests
 
     endpoint = "https://api.erg.ic.ac.uk/AirQuality/Information/Species/SpeciesCode={SpeciesCode}/Json"
@@ -145,27 +152,65 @@ def showSpeciesInfo(SpeciesCode):
     res = requests.get(url)
     speciesInfoDict = res.json() #Stores the result in a dictionary
     
+    import time 
     #Output the species information to the terminal
     print("       Species Name:", "\033[1m", speciesInfoDict['AirQualitySpecies']['Species']['@SpeciesName'], "\033[0m")
+    time.sleep(2)
     print("       Species Code:", "\033[1m", speciesInfoDict['AirQualitySpecies']['Species']['@SpeciesCode'], "\033[0m")
+    time.sleep(1.5)
     print("Species Description:", "\033[1m", speciesInfoDict['AirQualitySpecies']['Species']['@Description'], "\033[0m")
+    time.sleep(4)
     print("      Health Effect:", "\033[1m", speciesInfoDict['AirQualitySpecies']['Species']['@HealthEffect'], "\033[0m")
+    time.sleep(5)
     print("  Extra Information:", "\033[1m", speciesInfoDict['AirQualitySpecies']['Species']['@Link'], "\033[0m")
+    time.sleep(2)
     
     return res.json()
 
 
-def rm_function_3(*args, **kwargs):
-    """Your documentation goes here"""
-    # Your code goes here
+def showAllSpeciesInfo() -> dict:
+    """Displays the information about all common pollutant species in the terminal and returns a dictionary of information about the species
+    
+    Returns:
+        dict: A dictionary of all common pollutant species information
+    """ 
+    whitelistOfPollutants = ['NO2', 'CO', 'O3', 'PM10', 'SO2', 'PM25'] #Stores a list of the whitelisted pollutants
+    
+    #output the information about all pollutants in the list of whitelisted pollutants
+    for item in whitelistOfPollutants:
+        showSpeciesInfo(item)
+        print("") #Print a line break
+    
+def outputAllMonitoringStations():
+    """Outputs the name and site code of all monitoring stations in London to the terminal. 
+    
+        Returns:
+            list: a list of tuples with the name of the monitoring station in index 0 and the site code in index 1"""
+    import requests
 
+    url = "https://api.erg.ic.ac.uk/AirQuality/Information/MonitoringSiteSpecies/GroupName=London/Json"
 
+    res = requests.get(url)
+    speciesInfoDict = res.json() #Stores the result in a dictionary
+    
+    listOfMonitoringStations = [] #A list of tuples that all monitoring stations in london and their site code
+    
+    #Loop through each site contained within the returned dictionary of monitoring stations append their site name and site code to the listOfMonitoringStations
+    #Output to the terminal the site code and site name
+    for item in speciesInfoDict['Sites']['Site']:
+        listOfMonitoringStations.append((item['@SiteName'], item['@SiteCode']))
+        print(item['@SiteCode'] + " | " + item['@SiteName'])
+        
+    return listOfMonitoringStations
+    
 def rm_function_4(*args, **kwargs):
     """Your documentation goes here"""
     # Your code goes here
 
 
 # test
+#outputAllMonitoringStations()
 #outputPollutantGraph()
-showSpeciesInfo('NO2')
+#showSpeciesInfo('NO2')
+#showAllSpeciesInfo()
 # end
