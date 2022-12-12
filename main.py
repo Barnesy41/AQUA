@@ -1,6 +1,7 @@
 from reporting import readCSV, daily_average, daily_median, hourly_average, monthly_average, peak_hour_date, count_missing_data, fill_missing_data
 from intelligence import find_red_pixels, find_cyan_pixels, detect_connected_components, detect_connected_components_sorted
-from monitoring import showSpeciesInfo, showAllSpeciesInfo, outputAllMonitoringStations
+from monitoring import showSpeciesInfo, showAllSpeciesInfo, outputAllMonitoringStations, outputAirQualityIndexDataForSpecificSite
+
 
 def main_menu():
     """shows the main menu of the program"""
@@ -8,65 +9,114 @@ def main_menu():
           "I - Access the MI module\n"
           "M - Access the RM module\n"
           "A - Print the About text.\n"
-          "Q - Quit the application")
+          "Q - Quit the application\n")
+
 
 def outputMonitoringMenuOptions():
     '''Displays the menu options for the monitoring module inside the terminal window'''
-    print("SSI - Show information about a specific pollutant species\n"
+    print("\nSSI - Show information about a specific pollutant species\n"
           "SASI - Show the information about all pollutant species\n"
-          "OAMS - Outputs all of the monitoring stations and their site codes within London\n")
+          "OAMS - Outputs all of the monitoring stations and their site codes within London\n"
+          "OAQI - Outputs the air quality index for all pollutants at a specific monitoring station.\n")
+
+
+def inputPollutant():
+    """gets input from the user until a valid pollutant is entered or the user requests to quit the menu
+       returns the pollutant as a string or 'Q' if the user requests to quit the menu
+    """
+    whitelistOfPollutants = ['NO2', 'CO', 'O3', 'PM10', 'SO2', 'PM25']
     
+    # Asks the user to select the desired pollutant to get information about
+    pollutant = input(
+        "Enter a species code to show ('NO2', 'CO', 'O3', 'PM10', 'SO2', 'PM25') or 'Q' to quit: ").upper()
+
+    # re-input if an unknown pollutant is entered
+    while pollutant not in whitelistOfPollutants:
+        # Break the loop if the pollutant == 'Q' (the user would like to quit)
+        if pollutant == "Q":
+            break
+
+        # Request a new input
+        print("Invalid input.")
+        pollutant = input(
+            "Enter a species code to show ('NO2', 'CO', '03', 'PM10', 'SO2', 'PM25') or 'Q' to quit: ").upper()
+    return pollutant
+
+def inputMonitoringStation():
+    """gets input from the user until a valid monitoring station is entered or the user requests to quit the menu
+       returns the user's input if the monitoring station entered is valid, returns 'Q' if the user requests to quit"""
+    while True:
+        userInput = input(
+            "Enter a site code to show the air quality information for. If you would like to exit, input 'Q'").upper()
+
+        #If the user requests to quit return "Q"
+        if userInput == "Q":
+            return "Q"
+                
+        # Check that the site code input by the user is valid
+        listOfMonitoringStations = outputAllMonitoringStations(False) # Returns a list of all monitoring stations and their site codes
+        for item in listOfMonitoringStations:
+            if item[1] == userInput:
+                return userInput
+            
+        print("Invalid input.")
+        
+    
+                    
 def monitoring_menu():
     """Your documentation goes here"""
-    
-    exitModule = False #A flag used to exit this module when set to True
+
+    exitModule = False
     while exitModule == False:
-        
-        #Get the user to input the desired sub-division of the monitoring module
-        outputMonitoringMenuOptions()
-        userInput = input("Enter a sub-division of the monitoring module (e.g. 'SSI'):").lower()
-             
-        #Access the show species information function of the module
+        outputMonitoringMenuOptions() #Print the options for this module to the terminal
+
+        # Get the user to input the desired sub-division of the monitoring module
+        userInput = input(
+            "Enter a sub-division of the monitoring module (e.g. 'SSI') or 'Q' to quit:").lower()
+        print("")
+
+        # Access the show species information function of the module
         if userInput == "ssi":
-            whitelistOfPollutants = ['NO2', 'CO', 'O3', 'PM10', 'SO2', 'PM25'] #Stores a list of the whitelisted pollutants ('Q' is used to quit the module therefore cannot be whitelisted)
-            
-            #Asks the user to select the desired pollutant to get information about
-            pollutant = input("Enter a species code to show ('NO2', 'CO', 'O3', 'PM10', 'SO2', 'PM25') or 'Q' to quit: ").upper()
-            
-            # re-input if an unknown pollutant is entered
-            while pollutant not in whitelistOfPollutants:
-                #Break the loop if the pollutant == 'Q'
-                if pollutant == "Q":
-                    break
-                
-                #Request a new input
-                print("Invalid input.")
-                pollutant = input("Enter a species code to show ('NO2', 'CO', '03', 'PM10', 'SO2', 'PM25') or 'Q' to quit: ").upper()
-            
-            #Quit this menu if desired
-            if pollutant == "Q":
+            pollutant = inputPollutant()
+
+            # Quit this menu if desired
+            if pollutant == "q":
                 break
-            
-            #Show the species information
+
             showSpeciesInfo(pollutant)
-        
-        #Show the information for all pollutant species
+            
+            
+
+        # Show the information for all pollutant species
         elif userInput == "sasi":
             showAllSpeciesInfo()
-        
-        #Display the names and site codes of all London-based monitoring stations inside the terminal
-        elif userInput == 'OAMS':
+
+
+
+        # Display the names and site codes of all London-based monitoring stations inside the terminal
+        elif userInput == 'oams':
             outputAllMonitoringStations()
-            
-        #Quit this menu
-        elif userInput == "q": #Quit the menu
+
+
+
+        # Output the air quality information alongside health advice
+        elif userInput == "oaqi":
+            while True:
+
+                monitoringStation = inputMonitoringStation()
+                if monitoringStation != 'Q': #Run only if the user would not like to quit the menu
+                    outputAirQualityIndexDataForSpecificSite(monitoringStation)
+                else: 
+                    break # Exit the loop if the user would like to quit
+
+        # Quit this menu
+        elif userInput == "q":  # Quit the menu
             break
-        
+
         else:
             print("Invalid input")
-    
-    #Output information about each pollutant when selected
-    
+
+    # Output information about each pollutant when selected
 
 
 def intelligence_menu():
