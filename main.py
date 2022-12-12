@@ -64,7 +64,7 @@ def inputMonitoringStation():
     
                     
 def monitoring_menu():
-    """Your documentation goes here"""
+    """Allows the user to select the required functions from the monitoring module then return to the main menu when desired by inputting 'Q'"""
 
     exitModule = False
     while exitModule == False:
@@ -116,8 +116,6 @@ def monitoring_menu():
         else:
             print("Invalid input")
 
-    # Output information about each pollutant when selected
-
 
 def intelligence_menu():
     """Allows the user to choose the necessary options for the intelligence module of the program then return back to the main menu when required"""
@@ -128,19 +126,19 @@ def intelligence_menu():
               "DCC - Detect the number of connected components ina given binary image\n"
               "DCCS - Detect Connected Components Sorted, sort the connected component region sizes based on the number of pixels and output the top two largest connected components\n"
               "Q - Quit to main menu")
-        userInput = input("\nEnter an option from above: ")
+        userInput = input("\nInput an option from above: ")
 
         if userInput.lower() == 'frp':
             find_red_pixels(
-                input("enter the map file name (stored in data folder)"))
+                input("enter the map file name (stored in the /data folder)"))
         if userInput.lower() == 'fcp':
-            find_cyan_pixels(input("enter the map file name"))
+            find_cyan_pixels(input("enter the map file name (stored in the /data folder)"))
         if userInput.lower() == 'dcc':
             detect_connected_components(
-                input("enter the map file name (stored in the data folder)"))
+                input("enter the map file name (stored in the /data folder)"))
         if userInput.lower() == 'dccs':
             detect_connected_components_sorted(detect_connected_components(
-                input("enter the map file name (stored in the data folder)")))
+                input("enter the map file name (stored in the /data folder)")))
         if userInput.lower() == 'q':
             break
 
