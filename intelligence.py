@@ -11,7 +11,7 @@ def find_red_pixels(map_filename, upper_threshold=100, lower_threshold=50):
     Args:
         map_filename (str): The name of the map file that should be read
         upper_threshold (int): Defaults to 100. The lowest (exclusive) red RGB value for the pixel to be considered red
-        lower_threshold (int): Defaults to 50. the heighest (exclusive) green/blue RGB value for the pixel to be considered red
+        lower_threshold (int): Defaults to 50. the highest (exclusive) green/blue RGB value for the pixel to be considered red
 
     Outputs:
         file: A file map-red-pixels.jpg in the data file
@@ -282,8 +282,8 @@ def detect_connected_components(map_filename):
                 connectedRegionNumPixels.append(numPixels)
 
                 # Output the connected component number and the number of pixels contained within the component
-                print("Connected Component " + str(numberOfConnectedComponents) +
-                      ", number of pixels = " + str(numPixels))
+                #print("Connected Component " + str(numberOfConnectedComponents) +
+                #      ", number of pixels = " + str(numPixels))
 
                 # Write the connected component number and the number of pixels within the component into a file
                 outputFile.write("Connected Component " + str(
