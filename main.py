@@ -1,7 +1,6 @@
 from reporting import readCSV, daily_average, daily_median, hourly_average, monthly_average, peak_hour_date, count_missing_data, fill_missing_data
 from intelligence import find_red_pixels, find_cyan_pixels, detect_connected_components, detect_connected_components_sorted
-from monitoring import showSpeciesInfo, showAllSpeciesInfo, outputAllMonitoringStations, outputAirQualityIndexDataForSpecificSite
-
+from monitoring import showSpeciesInfo, showAllSpeciesInfo, outputAllMonitoringStations, outputAirQualityIndexDataForSpecificSite, drawPollutantPieChart
 
 def main_menu():
     """shows the main menu of the program"""
@@ -109,6 +108,18 @@ def monitoring_menu():
                 else: 
                     break # Exit the loop if the user would like to quit
 
+        elif userInput == "dppc":
+            
+            global pieChartDrawn
+            if pieChartDrawn == False:
+                approved = input("This function can only be run once per run. Would you like to resume? (yes/no)")
+                if approved.lower() == "yes":
+                    pieChartDrawn = drawPollutantPieChart()
+            else:
+                print("Pie chart has already been drawn.\nThis function can only be called once.\nTo call this function again, kill the terminal and re-run.")
+                import time
+                time.sleep(1)
+                        
         # Quit this menu
         elif userInput == "q":  # Quit the menu
             break
@@ -205,6 +216,9 @@ def reporting_menu():
 
 
 if __name__ == '__main__':
+    global pieChartDrawn
+    pieChartDrawn = False
+            
     while True:
         main_menu()
 

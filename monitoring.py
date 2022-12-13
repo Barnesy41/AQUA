@@ -9,6 +9,14 @@
 #
 import requests
 import datetime
+import turtle
+from turtle import *
+import statistics
+import math
+import time
+import os
+import sys
+import random
 
 
 def get_live_data_from_api(site_code='MY1', species_code='NO', start_date=None, end_date=None):
@@ -38,7 +46,6 @@ def get_live_data_from_api(site_code='MY1', species_code='NO', start_date=None, 
     res = requests.get(url)
     return res.json()
 
-# print(get_live_data_from_api())
 
 
 # Accessing data examples
@@ -326,7 +333,309 @@ def outputAirQualityIndexDataForSpecificSite(SiteCode: str) -> bool:
     
 
 
-# test
+def validateDate(date):
+    try:
+        datetime.datetime.strptime(date, '%Y-%m-%d')
+    except ValueError:
+        raise ValueError("Incorrect data format, should be YYYY-MM-DD")
+    
+def validateTime(time):
+    try:
+        datetime.datetime.strptime(time, '%H:%M:%S')
+    except ValueError:
+        raise ValueError("Incorrect data format, should be HH:MM:SS")
+
+def inputSiteCode():
+    """gets input from the user until a valid monitoring station is entered or the user requests to quit the menu
+       returns the user's input if the monitoring station entered is valid, returns 'Q' if the user requests to quit"""
+    while True:
+        userInput = input(
+            "Enter a site code. If you would like to exit, input 'Q'").upper()
+
+        #If the user requests to quit return "Q"
+        if userInput == "Q":
+            return "Q"
+                
+        # Check that the site code input by the user is valid
+        listOfMonitoringStations = outputAllMonitoringStations(False) # Returns a list of all monitoring stations and their site codes
+        for item in listOfMonitoringStations:
+            if item[1] == userInput:
+                return userInput
+            
+        print("Invalid input.")
+        
+def drawPollutantPieChart():
+    '''Outputs a pie chart using the turtle module. Displays the average percentage of each pollutant at a specific monitoring station
+       in different average formats (mean,median,mode) then also sums up the values and creates a chart.
+       Returns True if the pie chart has been drawn, False otherwise.
+       
+       Inputs:
+       1. The site code of the monitoring station
+       2. The date to start the pollutant data set from
+       3. The date to end the pollutant data set at
+       
+       Outputs:
+       1. A pie chart showing the average percentage of each pollutant at a specific monitoring station
+       
+       Returns:
+       1. True if the pie chart has been drawn, False otherwise
+    '''
+       
+    import datetime
+    from datetime import datetime
+    
+    #Get the pollutant data from a specific monitoring station
+    siteCode = inputSiteCode()
+    
+    if siteCode != 'Q':
+        #Enter the start and end date of the data set to retrieve from the API
+        startDate = input("enter the date you would like to receive data from (YYYY-MM-DD): ")
+        validateDate(startDate) #Validates that the date is in the correct format
+        endDate = input("enter the final date you would like to receive data to (YYYY-MM-DD): ")
+        validateDate(endDate) #Validates that the date is in the correct format
+        
+        #Validate the start and end date
+        while startDate >= endDate:
+            print("The start date must be before the end date.")
+            
+            #Enter the start and end date of the data set to retrieve from the API
+            startDate = input("enter the date you would like to receive data from (YYYY-MM-DD): ")
+            validateDate(startDate) #Validates that the date is in the correct format
+            endDate = input("enter the final date you would like to receive data to (YYYY-MM-DD): ")
+            validateDate(endDate) #Validates that the date is in the correct format
+        
+        #Get the string for todays date
+        import datetime
+        dateToday = datetime.date.today()
+        dateToday = dateToday.strftime('%Y-%m-%d') #Format datetime object to string
+            
+        #Validate the date and time
+        while startDate >= dateToday or endDate > dateToday:
+            print("The start date must be before today's date, and the end date must be before or equal to today's date.")
+            
+            #Enter the start and end date of the data set to retrieve from the API
+            startDate = input("enter the date you would like to receive data from (YYYY-MM-DD): ")
+            validateDate(startDate) #Validates that the date is in the correct format
+            endDate = input("enter the final date you would like to receive data to (YYYY-MM-DD): ")
+            validateDate(endDate) #Validates that the date is in the correct format
+        
+        #Get the pollutant data for the monitoring station
+        import requests
+        endpoint = "https://api.erg.ic.ac.uk/AirQuality/Data/Site/SiteCode={SiteCode}/StartDate={StartDate}/EndDate={EndDate}/Json"
+
+
+        url = endpoint.format(
+            SiteCode=siteCode,
+            StartDate=startDate,
+            EndDate=endDate
+        )
+
+        result = requests.get(url)
+        pollutantDict = result.json()
+        
+        #Add each pollutant type to a dictionary of its pollutant type as a key and then a list of its values
+        pollutantValuesDict = dict()
+        for item in pollutantDict['AirQualityData']['Data']:
+            #Only add data to the data set if data exists for that specific date and time
+            if item['@Value'] != '':
+                pollutantType = item['@SpeciesCode']
+                
+                #If the pollutant key does not already exist, create the key
+                #and append the pollutant value to a list within that dictionary key 
+                # otherwise append to the list within the dictionary
+                if pollutantType not in pollutantValuesDict.keys():
+                    pollutantValuesDict[pollutantType] = [float(item['@Value'])]
+                else:
+                    pollutantValuesDict[pollutantType].append(float(item['@Value']))
+
+        #If there is no valid data for that specific date, return False
+        if len(pollutantValuesDict) == 0:
+            print("No pollutant data found.")
+            return False
+        
+        
+        #Create dictionaries for the different average types:
+        meanValueDict = dict()
+        medianValueDict = dict()
+        modeValueDict = dict()
+        sumValueDict = dict()
+        
+        import math
+        import statistics
+        #Calculate the value to add to each dictionary and add as a key value pair where key = pollutant name
+        for key in pollutantValuesDict.keys():
+            meanValueDict[key] = statistics.mean(pollutantValuesDict[key]) #Calculate the mean average
+            medianValueDict[key] = statistics.median(pollutantValuesDict[key]) #Calculate the median
+            modeValueDict[key] = statistics.mode(pollutantValuesDict[key]) #Calculate the mode
+            sumValueDict[key] = sum(pollutantValuesDict[key]) #Calculate the sum of the values
+
+        
+        #Instantiate the turtle object
+        pieChartTurtle = turtle.Turtle()
+        pieChartTurtle.hideturtle()
+
+        #Set the radius of the pie chart
+        pieChartRadius = 200
+
+        #Define the colors for the pie chart
+        colors = ['red', 'green', 'blue', 'yellow','magenta'] #Black is kept for use with labels
+        
+        #Define the labels for the pie chart
+        listOfChartTypesToDraw = ['mean','median','mode','sum']
+        
+        #Tell the user they need to open another window
+        print("Open the python turtle window")
+            
+        #For each chart type to draw
+        for chartType in listOfChartTypesToDraw:
+            #Set the screensize
+            Screen().setup(800,800)
+            
+            #Give the chart a title
+            pieChartTurtle.pencolor('black')
+            pieChartTurtle.hideturtle()
+            pieChartTurtle.penup()
+            pieChartTurtle.goto(0,300)
+            pieChartTurtle.pendown()
+            pieChartTurtle.write("This Pie Chart shows the average percentage of each pollutant detected at a specific monitoring station", align='center', font=("Arial",12,'normal'))
+            
+            #Label the pie chart
+            pieChartTurtle.pencolor('black')
+            pieChartTurtle.penup()
+            pieChartTurtle.goto(0,-pieChartRadius - 30)
+            pieChartTurtle.pendown()
+            pieChartTurtle.write(chartType.upper(), align='center', font=("Arial",10,'normal'))
+            
+            #Go to the location the circle should start from
+            pieChartTurtle.penup()
+            pieChartTurtle.goto(0,0)
+            pieChartTurtle.pendown()
+            
+            #a list of tuples in the format: (percentage, key, value)
+            percentagesOfCircleToDrawList = []
+            
+            #Append the percentage of the pie chart to draw to the list if the current type of chart to draw is the mean 
+            # pollutant pie chart
+            if chartType == 'mean':
+                #Get the sum of all of the mean values
+                sumOfAllMeanValues = 0
+                for value in meanValueDict.values():
+                    sumOfAllMeanValues += value
+                
+                #Append values to the list of percentage values
+                for key in meanValueDict:
+                    value = meanValueDict[key]
+                    percentage = (360/sumOfAllMeanValues) * value
+                    percentagesOfCircleToDrawList.append((percentage,key,value))
+                    
+            #Append the percentage of the pie chart to draw to the list if the current type of chart to draw is the
+            # median pollutant pie chart   
+            if chartType == 'median':
+                #Get the sum of all of the mean values
+                sumOfAllMedianValues = 0
+                for value in medianValueDict.values():
+                    sumOfAllMedianValues += value
+                
+                #Append values to the list of percentage values
+                for key in medianValueDict:
+                    value = medianValueDict[key]
+                    percentage = (360/sumOfAllMedianValues) * value
+                    percentagesOfCircleToDrawList.append((percentage,key,value))
+                    
+            #Append the percentage of the pie chart to draw to the list if the current type of chart to draw is the
+            #mode pollutant pie chart   
+            if chartType == 'mode':
+                #Get the sum of all of the mean values
+                sumOfAllModeValues = 0
+                for value in modeValueDict.values():
+                    sumOfAllModeValues += value
+                
+                #Append values to the list of percentage values
+                for key in modeValueDict:
+                    value = modeValueDict[key]
+                    percentage = (360/sumOfAllModeValues) * value
+                    percentagesOfCircleToDrawList.append((percentage,key,value))
+                    
+            #Append the percentage of the pie chart to draw to the list if the current type of chart to draw is the
+            # median pollutant pie chart   
+            if chartType == 'sum':
+                #Get the sum of all of the mean values
+                sumOfAllSumValues = 0
+                for value in sumValueDict.values():
+                    sumOfAllSumValues += value
+                
+                #Append values to the list of percentage values
+                for key in sumValueDict:
+                    value = sumValueDict[key]
+                    percentage = (360/sumOfAllSumValues) * value
+                    percentagesOfCircleToDrawList.append((percentage,key,value))
+                    
+            #Draw the pie chart
+            currentPenColour = 'cyan'
+            for item in percentagesOfCircleToDrawList:
+                
+                #Change the colour of the pen
+                newPenColour = currentPenColour
+                while newPenColour == currentPenColour:
+                    
+                    #Select a random colour from the list of colours
+                    if item != percentagesOfCircleToDrawList[0]:
+                        newPenColour = colors[random.randint(0,len(colors) - 1)] #Select a random colour from the list of available colours
+                    
+                    #Always select the same first pen colour so that there is no clash between colours in the chart
+                    else:
+                        break
+                currentPenColour = newPenColour
+                pieChartTurtle.fillcolor(currentPenColour)
+                pieChartTurtle.pencolor(currentPenColour)
+                
+                
+                #Draw the sector then fill with the corresponding colour
+                pieChartTurtle.begin_fill()
+                pieChartTurtle.right(90)
+                pieChartTurtle.forward(pieChartRadius)
+                pieChartTurtle.left(90)
+                pieChartTurtle.circle(pieChartRadius, item[0]) #Draw the % of the pie chart that represents that pollutant
+                pieChartTurtle.left(90)
+                pieChartTurtle.forward(pieChartRadius)
+                pieChartTurtle.right(90)
+                pieChartTurtle.end_fill()
+                
+                #Get the coordinates of the turtle
+                turtleX = pieChartTurtle.xcor()
+                turtleY = pieChartTurtle.ycor()
+                
+                #Write the pollutant type in the centre of the sector
+                pieChartTurtle.penup()
+                pieChartTurtle.right(90)
+                pieChartTurtle.right(item[0]/2)
+                pieChartTurtle.forward(pieChartRadius/2)
+                pieChartTurtle.pendown()
+                pieChartTurtle.pencolor('black')
+                pieChartTurtle.write(item[1] + "\n" + str("{:.1f}".format(item[0])) + "%", align='center', font=("Arial",10,'bold')) #Write the pollutant name in the sector
+                pieChartTurtle.pencolor(currentPenColour)
+                pieChartTurtle.penup()
+                pieChartTurtle.setposition(turtleX,turtleY)
+                pieChartTurtle.left(item[0]/2)
+                pieChartTurtle.left(90)
+                pieChartTurtle.pendown()
+            
+            #Wait so that the finished pie chart can be read
+            time.sleep(3)
+            
+            #Clear the canvas ready for the next chart
+            pieChartTurtle.clear()
+
+        turtle.bye()
+        return True
+    else:
+        print("Quitting...")
+    return False
+    
+    
+    
+#get_live_data_from_api('CTA','NO','2020-12-01')
+#drawPollutantPieChart()
 #outputAirQualityIndexDataForSpecificSite('CT4')
 #print(getAirQualityIndexData(1.1))
 #outputAllMonitoringStations()
