@@ -242,7 +242,6 @@ def getAirQualityIndexData(AirQualityIndex):
         airQualityIndexDict['AirQualityIndexHealthAdvice']['AirQualityBanding']['HealthAdvice'][1]['@Advice'] = 'Unknown'
 
     return airQualityIndexDict
-    
 
 def outputAirQualityIndexDataForSpecificSite(SiteCode: str) -> bool:
     """Outputs the air quality index information for a specific monitoring site along with health advice. Returns False if no information was found and returns True if information is found
@@ -342,7 +341,7 @@ def inputSiteCode():
         listOfMonitoringStations = outputAllMonitoringStations(False) # Returns a list of all monitoring stations and their site codes
         for item in listOfMonitoringStations:
             if item[1] == userInput:
-                return userInput
+                return userInput.upper()
             
         print("Invalid input.")
         
