@@ -168,10 +168,9 @@ def showSpeciesInfo(SpeciesCode:str) -> dict:
     for item in listToOutput:
         print(item)
         time.sleep(1)
-            
-    
-    
+             
     return res.json()
+
 
 def showAllSpeciesInfo() -> dict:
     """Displays the information about all common pollutant species in the terminal and returns a dictionary of information about the species
@@ -312,14 +311,19 @@ def outputAirQualityIndexDataForSpecificSite(SiteCode: str) -> bool:
 
 
 def validateDate(date):
+    '''Returns True if the date is valid otherwise raises a value error'''
     try:
         datetime.datetime.strptime(date, '%Y-%m-%d')
+        return True 
     except ValueError:
         raise ValueError("Incorrect data format, should be YYYY-MM-DD")
+
     
 def validateTime(time):
+    '''Returns True if the time is valid otherwise raises a value error'''
     try:
         datetime.datetime.strptime(time, '%H:%M:%S')
+        return True
     except ValueError:
         raise ValueError("Incorrect data format, should be HH:MM:SS")
 
