@@ -16,7 +16,8 @@ def outputMonitoringMenuOptions():
     print("\nSSI - Show information about a specific pollutant species\n"
           "SASI - Show the information about all pollutant species\n"
           "OAMS - Outputs all of the monitoring stations and their site codes within London\n"
-          "OAQI - Outputs the air quality index for all pollutants at a specific monitoring station.\n")
+          "OAQI - Outputs the air quality index for all pollutants at a specific monitoring station.\n"
+          "DPPC - Draw a pie chart showcasing the average percentage of each pollutant at a given monitoring station.\n")
 
 
 def inputPollutant():
