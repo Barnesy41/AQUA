@@ -116,28 +116,7 @@ def outputPollutantGraph(site_code='MY1', species_code='NO', numberOfDays=1):
     for line in outputArr:
         print(line)
 
-def testFunc(site_code='MY1', species_code='NO', start_date=None, end_date=None):
-    import requests
-    import datetime
-    start_date = datetime.date.today() if start_date is None else start_date
-    end_date = start_date + \
-        datetime.timedelta(days=1) if end_date is None else end_date
 
-    endpoint = "https://api.erg.ic.ac.uk/AirQuality/Annual/MonitoringObjective/GroupName={GroupName}/Year={Year}/Json"
-
-    url = endpoint.format(
-        site_code=site_code,
-        species_code=species_code,
-        start_date=start_date,
-        end_date=end_date
-    )
-
-    res = requests.get(url)
-    
-    print(res.json())
-    return res.json()
-
-#testFunc()
 
 def showSpeciesInfo(SpeciesCode:str) -> dict:
     """Displays the information about a given pollutant species in the terminal and returns a dictionary of information about the species
@@ -193,7 +172,6 @@ def showSpeciesInfo(SpeciesCode:str) -> dict:
     
     
     return res.json()
-
 
 def showAllSpeciesInfo() -> dict:
     """Displays the information about all common pollutant species in the terminal and returns a dictionary of information about the species
