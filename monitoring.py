@@ -70,7 +70,7 @@ def outputPollutantGraph(site_code='MY1', numberOfDays=1):
                 False
     
     #Check that there are valid values returned from the api call
-    if dictOfValues.values() <= 0:
+    if len(dictOfValues.values()) <= 0:
         print("there are no valid values returned from the api call.\nFunction Failed!")
         return False
     
