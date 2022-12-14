@@ -42,7 +42,7 @@ def daily_average(data: dict, monitoring_station: str, pollutant: str) -> list:
         Exception: Raises an exception if an invalid monitoring station is input
         Exception: Raises an exception of the data input as a parameter is not a dictionary
         Exception: Raises an exception if the monitoring_station parameter is not a string
-        Exception: Raises an exeption if the pollutant parameter is not a string
+        Exception: Raises an exception if the pollutant parameter is not a string
 
     Returns:
         list: a list containing the daily average pollutant data for a given pollutant and monitoring station
