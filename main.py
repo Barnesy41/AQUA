@@ -1,6 +1,7 @@
 from reporting import readCSV, daily_average, daily_median, hourly_average, monthly_average, peak_hour_date, count_missing_data, fill_missing_data
 from intelligence import find_red_pixels, find_cyan_pixels, detect_connected_components, detect_connected_components_sorted
-from monitoring import showSpeciesInfo, showAllSpeciesInfo, outputAllMonitoringStations, outputAirQualityIndexDataForSpecificSite, drawPollutantPieChart
+from monitoring import showSpeciesInfo, showAllSpeciesInfo, outputAllMonitoringStations, outputAirQualityIndexDataForSpecificSite
+from monitoring import drawPollutantPieChart, outputPollutantGraph, inputSiteCode
 
 def main_menu():
     """shows the main menu of the program"""
@@ -17,7 +18,8 @@ def outputMonitoringMenuOptions():
           "SASI - Show the information about all pollutant species\n"
           "OAMS - Outputs all of the monitoring stations and their site codes within London\n"
           "OAQI - Outputs the air quality index for all pollutants at a specific monitoring station.\n"
-          "DPPC - Draw a pie chart showcasing the average percentage of each pollutant at a given monitoring station.\n")
+          "DPPC - Draw a pie chart showcasing the average percentage of each pollutant at a given monitoring station.\n"
+          "OPG - Outputs a text-based graph for the mean average value of each pollutant at a given monitoring station.\n")
 
 
 def inputPollutant():
@@ -121,6 +123,23 @@ def monitoring_menu():
                 import time
                 time.sleep(1)
                         
+        #Output Pollutant Graph
+        elif userInput == "opg":
+            #Get the number of days of data the user would like to request
+            numberOfDays = 0
+            while numberOfDays <= 0:
+                numberOfDays = int(input("Enter the number of days you would like to calculate the average pollutant level with: "))
+                
+                if numberOfDays <= 0:
+                    print("Invalid input.")
+            
+            #Get the site code using the pre-existing function                
+            siteCode = inputSiteCode()
+            
+            #Run the function only if the user hasn't requested to quit the module
+            if siteCode != 'Q':
+                outputPollutantGraph(siteCode,numberOfDays)
+            
         # Quit this menu
         elif userInput == "q":  # Quit the menu
             break

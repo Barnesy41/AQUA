@@ -57,55 +57,99 @@ print(a['RawAQData']['Data'][0]['@Value'])
 """
 
 
-def outputPollutantGraph(site_code='MY1', species_code='NO', numberOfDays=1):
+def outputPollutantGraph(site_code='MY1', numberOfDays=1):
+    """Outputs a text-based graph to the terminal. 
+    It takes in a monitoring station site code, collects all pollutant data for the given number of days prior to today and calculates
+    the mean average of all the values for each pollutant type at that monitoring station. 
+    It then outputs a bar graph scaled to the size of the terminal comparing the average levels of each pollutant at the monitoring station.
+
+    Raises:
+        Exception: terminal size is too small
+        
+    Outputs:
+        a text-based graph
+    """    
+    #TODO if there are no values within the request an exception is raised, fix this
+    
     start_date = datetime.date.today() - datetime.timedelta(numberOfDays - 1)  # Stores the date to search from
     # Stores the date to search to (adds 1 to the end to include the final day)
     end_date = datetime.date.today() + datetime.timedelta(1)
 
-    endpoint = "https://api.erg.ic.ac.uk/AirQuality/Data/SiteSpecies/SiteCode={site_code}/SpeciesCode={species_code}/StartDate={start_date}/EndDate={end_date}/Json"
+    endpoint = "https://api.erg.ic.ac.uk/AirQuality/Data/Site/SiteCode={SiteCode}/StartDate={StartDate}/EndDate={EndDate}/Json"
 
     url = endpoint.format(
-        site_code=site_code,
-        species_code=species_code,
-        start_date=start_date,
-        end_date=end_date
+        SiteCode=site_code,
+        StartDate=start_date,
+        EndDate=end_date
     )
 
-    dailyPollutantDict = requests.get(url).json()
-
-    listOfValues = [] #Stores the list of values returned from the api call
-    indexToAccess = 0
-
+    pollutantDict = requests.get(url).json()
+    
     # TODO the value is not used?
     #Append each value returned from the api call to a list
-    for value in dailyPollutantDict['RawAQData']['Data']:
-        print(dailyPollutantDict)
-        try:
-            listOfValues.append(
-                float(dailyPollutantDict['RawAQData']['Data'][indexToAccess]['@Value']))
-            indexToAccess += 1
-        except:
-            False
+    dictOfValues = {} #Stores the pollutant code as a key and each key contains a list of values returned from the api call for that particular pollutant
+    for dict in pollutantDict['AirQualityData']['Data']:
+        pollutantCode = dict['@SpeciesCode'] #Retrieve the pollutant code from the dictionary 
+        
+        if(pollutantCode in dictOfValues.keys()):
+            #Append value to dictionary if it is not empty
+            try:
+                dictOfValues[pollutantCode].append(
+                    float(dict['@Value']))
+            except:
+                False
+        else:
+            #Append value to new dictionary key if the value is not empty
+            try:
+                dictOfValues[pollutantCode] = [float(dict['@Value'])]
+            except:
+                False
+    
+    #Find the mean average of the list of scaled values
+    #Swap the list of values for a single mean value in the dictionary
+    for key in dictOfValues.keys():
+        dictOfValues[key] = statistics.mean(dictOfValues[key])
+        
+    #Finds the maximum pollutant value in the current data set
+    maximumValue = max(dictOfValues.values())
+    
+    #Get the size of the terminal
+    terminalColumns, terminalLines = os.get_terminal_size()
+    
+    #Scale down the pollutant values if the terminal is too small
+    scale = 1
+    if terminalLines - 6 < maximumValue:
+        scale = (terminalLines - 6)/maximumValue #Calculate the scale factor
+        
+        #Scale each value in each list of the dictionary down by the correct scale factor
+        #Convert to an integer value
+        for pollutantCode in dictOfValues.keys():
+            dictOfValues[pollutantCode] = int(dictOfValues[pollutantCode]*scale)
+            
+    #Create an exception if terminal does not have a great enough line length
+    if terminalLines - 6 <= 0:
+        raise Exception("Terminal size is too small. Make terminal larger then try again.")
 
-    maximumValue = int(max(listOfValues)) #Stores the largest value contained within the listOfValues
-
-    outputArr = []
     #Counts down from the maximumValue to zero outputting a graph
-    for i in range(maximumValue, -1, -1):
+    outputArr = []
+    print("Scale Factor: " + str("{:.2f}".format(scale)))
+    for i in range(int(maximumValue*scale), -1, -1):
         line = ""
 
         # Unless this is the line with the bottom of the graph, create a line that starts with the graph number followed by the | char
         if (i != 0):
-            line += " "*(len(str(maximumValue))-len(str(i))) + str(i) + "|"
-            for value in listOfValues:
-                if value == i:
-                    line += str(value)
+            line += " "*(len(str(int(maximumValue*scale)))-len(str(i))) + str(i) + "|"
+            #TODO HERE
+            for key in dictOfValues.keys():
+                if dictOfValues[key] >= i:
+                    line += "\033[1;32m□   \u001b[0m"
                 else:
-                    line += " "
+                    line += "    "
+            
                     
         else:  # Otherwise output the bottom line of the graph
-            line += " "*(len(str(maximumValue))-len(str(i))) + "0" + "-"
-            line += "-"*len(listOfValues)
+            line += " "*(len(str(int(maximumValue*scale)))-len(str(i))) + "0" + "+"
+            line += "-"*((len(dictOfValues)*4)-3)
 
         outputArr.append(line)
 
@@ -116,6 +160,24 @@ def outputPollutantGraph(site_code='MY1', species_code='NO', numberOfDays=1):
     for line in outputArr:
         print(line)
 
+    #Calculate the lines to be output as x-axis labels
+    listOfLinesToOutput = []
+    for index in range(0,len(max(dictOfValues.keys()))):
+        lineToAppend = " "*(len(str(int(maximumValue*scale))) + 1)
+        for pollutant in dictOfValues.keys():
+            try:
+                lineToAppend += pollutant[index] + "   "
+            except:
+                lineToAppend += "    "
+        listOfLinesToOutput.append(lineToAppend)
+        
+    #Output the x-axis labels to the terminal
+    for line in listOfLinesToOutput:
+        print(line)
+        
+    #Allow the user time to read the graph
+    time.sleep(3)
+    
 
 
 def showSpeciesInfo(SpeciesCode:str) -> dict:
@@ -623,4 +685,5 @@ def drawPollutantPieChart():
 #outputPollutantGraph()
 #showSpeciesInfo('NO2')
 #showAllSpeciesInfo()
+#outputPollutantGraph()
 # end
