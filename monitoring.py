@@ -421,7 +421,7 @@ def validateDateFormat(date:str) -> bool:
         raise ValueError("Incorrect data format, should be YYYY-MM-DD")
 
     
-def validateTime(time:str) -> bool:
+def validateTimeFormat(time:str) -> bool:
     '''Accepts a time in as a parameter. Returns True if the time is in a valid format ('%H:%M:%S') otherwise raises a value error
     
     Args:
