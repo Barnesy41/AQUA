@@ -1,7 +1,7 @@
 import numpy as np 
 
 def sumvalues(values):
-    """Returns the sum of all values in an array
+    """Returns the sum of all values in a list
     
     Args:
         values (list): A list of integers
