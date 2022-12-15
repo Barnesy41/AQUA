@@ -165,6 +165,8 @@ def showSpeciesInfo(SpeciesCode:str) -> dict:
         False: if the function failed
     """ 
     import requests
+    
+    #TODO sanatise parameters
 
     endpoint = "https://api.erg.ic.ac.uk/AirQuality/Information/Species/SpeciesCode={SpeciesCode}/Json"
 
@@ -177,7 +179,7 @@ def showSpeciesInfo(SpeciesCode:str) -> dict:
     
     #Check that some data was returned for the specific species code
     #Return False if no data was returned
-    if len(speciesInfoDict <=0):
+    if len(speciesInfoDict) <= 0:
         return False
     
     import time 
