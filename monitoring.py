@@ -14,7 +14,7 @@ import os
 import sys
 import random
 
-def outputPollutantGraph(site_code='MY1', numberOfDays=1):
+def outputPollutantGraph(site_code='MY1', numberOfDays=2):
     """Outputs a text-based graph to the terminal. 
     It takes in a monitoring station site code, collects all pollutant data for the given number of days prior to today and calculates
     the mean average of all the values for each pollutant type at that monitoring station. 
@@ -46,6 +46,8 @@ def outputPollutantGraph(site_code='MY1', numberOfDays=1):
         StartDate=start_date,
         EndDate=end_date
     )
+    
+    #TODO error caused when non-int input
 
     #Requests data from the API and converts to dictionary format
     pollutantDict = requests.get(url).json()
