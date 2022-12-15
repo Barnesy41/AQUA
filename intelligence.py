@@ -302,7 +302,20 @@ def detect_connected_components(map_filename):
 
 def detect_connected_components_sorted(MARK):
     """
-    Your documentation goes here
+    Performs sorting on the connected component region size based on
+    the number of pixels and outputs all connected components in descending order. For each connected
+    component region, the number of pixels inside it is output, and the number of pixels is written
+    into a text file cc-output-2b.txt. In cc-output-2b.txt, the last line should give the total number of
+    connected components. Outputs the two largest connected components inside the image cc-top-2.jpg
+    
+    Outputs
+    ----------
+        1. The two largest connected components inside the image cc-top-2.jpg
+        2. All connected components and the respective number of pixels inside the component to the terminal in descending order
+    
+    Parameters
+    ----------
+    MARK (numpy NDarray): a 2D array containing each row of the image. All path pixels are labelled with their respective component number. All other pixels are labelled with 0
     """
     # Your code goes here
     fileToReadFrom = open("cc-output-2a.txt", 'r')
@@ -310,6 +323,7 @@ def detect_connected_components_sorted(MARK):
     # Store the connected components in a sorted list
     unsortedComponents = []
     sortedComponents = []
+    largestComponentNumber = 0
     for line in fileToReadFrom:
         line = line.rstrip()
 
@@ -319,6 +333,10 @@ def detect_connected_components_sorted(MARK):
             # Gets the number of pixels in each component from each line in the txt file and stores as integer value
             numPixels = int(line[line.index('=')+2:])
             unsortedComponents.append((numPixels, componentNumber))
+            
+            #get the largest component number
+            if largestComponentNumber < componentNumber:
+                largestComponentNumber = componentNumber
         except:
             False
 
@@ -347,6 +365,12 @@ def detect_connected_components_sorted(MARK):
 
         print("Connected Component " + str(
             item[1]) + ", number of pixels = " + str(item[0]))  # Output the results to the terminal
+    
+    #Write the total number of connected components to the output file
+    fileToWriteTo.write("Total number of connected components = " + str(largestComponentNumber))
+    
+    #Output the total number of connected components to the terminal
+    print("Total number of connected components = " + str(largestComponentNumber))
 
     # Create an image containing the 2 largest connected components
     # Get the height and width the image should be
