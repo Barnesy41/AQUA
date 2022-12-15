@@ -155,7 +155,7 @@ def daily_median(data: dict, monitoring_station: str, pollutant: str) -> list:
                 raise Exception("unexpected parameter! Parameter: monitoring_station: ", monitoring_station,
                                 "entered. expected: 'harlington', 'marylebone road', or 'n kensington'")
 
-    # Raise an exception if an unknown pollutant is enteredd
+    # Raise an exception if an unknown pollutant is entered
     if pollutant != 'no':
         if pollutant != 'pm10':
             if pollutant != 'pm25':
@@ -189,9 +189,10 @@ def daily_median(data: dict, monitoring_station: str, pollutant: str) -> list:
             i = float(i)
             dailyPollutantValues.append(i)
         except:
-            a = 1  # Ignore any missing data
+            False  # Ignore any missing data
 
-        if count % 24 == 23:
+        if count % 24 == 23 and len(dailyPollutantValues) > 0:
+            #TODO am i allowed to use .sort() ?
             dailyPollutantValues.sort()  # Sort the values into order
             medianValue = 0.0
 
